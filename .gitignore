@@ -1,0 +1,9 @@
+/appsettings.json
+/EFCore/appsettings.json
+/WebApi/appsettings.json
+/WebApi/.vs
+/EFCore/bin
+/EFCore/obj
+/WebApi/bin
+/WebApi/obj
+WebApi/appsettings.Development.json
