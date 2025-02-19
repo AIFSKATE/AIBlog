@@ -8,3 +8,4 @@
 /WebApi/obj
 WebApi/appsettings.Development.json
 /.vs
+/Identity/obj

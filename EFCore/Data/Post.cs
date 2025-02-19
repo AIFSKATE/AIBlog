@@ -13,6 +13,7 @@ namespace EFCore.Data
     {
         public int Id { get; set; }
         public string Title { get; set; }
+        public string Html { get; set; }
         public List<Tag> Tags { get; set; }
         public DateTime CreationTime { get; set; }
     }
