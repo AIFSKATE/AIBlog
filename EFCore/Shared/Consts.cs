@@ -11,5 +11,6 @@ namespace EFCore.Shared
         public const string Default = "AIBlog";
         public const string PostTable = Default + "_Post";
         public const string TagTable = Default + "_Tag";
+        public const string PostTagTable = Default + "_PostTag";
     }
 }
