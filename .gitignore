@@ -9,3 +9,6 @@
 WebApi/appsettings.Development.json
 /.vs
 /Identity/obj
+/Domain/bin
+/Domain/obj
+/Identity/bin

@@ -1,12 +1,15 @@
 ﻿using EFCore.Data;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using WebApi.Identity;
 
 namespace EFCore
 {
-    public class AIBlogDbContext : DbContext
+    public class AIBlogDbContext : IdentityDbContext<User, Role, Guid>
     {
         public DbSet<Post> posts { get; set; }
         public DbSet<Tag> tags { get; set; }
+
         public AIBlogDbContext(DbContextOptions<AIBlogDbContext> options) : base(options)
         {
 
