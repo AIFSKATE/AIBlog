@@ -16,6 +16,7 @@ namespace WebApi.Controllers
 {
     [ApiController]
     [Route("[controller]/[Action]")]
+    [Authorize(Roles = AIBlogRole.Admin)]
     public class AccountController : ControllerBase
     {
         readonly RoleManager<Role> roleManager;
@@ -35,7 +36,6 @@ namespace WebApi.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = AIBlogRole.Admin)]
         public async Task<IActionResult> Register(RegisterInfo registerInfo)
         {
             string username = registerInfo.Name;
@@ -62,7 +62,6 @@ namespace WebApi.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = AIBlogRole.Admin)]
         public async Task<IActionResult> CreateRole(RoleCreateInfo roleCreateInfo)
         {
             var exist = await roleManager.RoleExistsAsync(roleCreateInfo.RoleName);
@@ -83,7 +82,6 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = AIBlogRole.Admin)]
         public async Task<IActionResult> UserToRole(string username, string rolename)
         {
             var user = await userManager.FindByNameAsync(username);
@@ -109,6 +107,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] LoginInfo loginInfo)
         {
             string userName = loginInfo.Name;
