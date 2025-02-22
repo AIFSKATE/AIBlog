@@ -1,11 +1,12 @@
-﻿using Domain;
-using EFCore;
+﻿using EFCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Domain.Account;
 
 namespace WebApi
 {
@@ -59,8 +60,29 @@ namespace WebApi
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = secKey,
+                        //ClockSkew = TimeSpan.Zero
                     };
                 });
+        }
+
+        internal static void ConfigureSwagger(WebApplicationBuilder builder)
+        {
+            builder.Services.AddSwaggerGen(c =>
+            {
+                var scheme = new OpenApiSecurityScheme()
+                {
+                    Description = "Authorization header. \r\nExample: 'Bearer 12345abcdef",
+                    Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Authorization" },
+                    Scheme = "oauth2",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                };
+                c.AddSecurityDefinition("Authorization", scheme);
+                var requirement = new OpenApiSecurityRequirement();
+                requirement[scheme] = new List<string>();
+                c.AddSecurityRequirement(requirement);
+            });
         }
     }
 }

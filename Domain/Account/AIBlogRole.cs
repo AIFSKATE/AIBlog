@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain
+namespace Domain.Account
 {
-    public class LoginInfo
+    public static class AIBlogRole
     {
-        public string Name { get; set; }
-        public string Password { get; set; }
+        public const string Admin = nameof(Admin);
     }
 }

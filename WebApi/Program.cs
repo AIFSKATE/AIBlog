@@ -13,7 +13,7 @@ namespace WebApi
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            ConfigureServices.ConfigureSwagger(builder);
             builder.Services.AddDataProtection();
             ConfigureServices.ConfigureAIBlogDbContext(builder);
             ConfigureServices.ConfigureJWT(builder);

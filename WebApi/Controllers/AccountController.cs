@@ -1,5 +1,4 @@
-﻿using Domain;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Extensions.Options;
+using Domain.Account;
 
 namespace WebApi.Controllers
 {
@@ -35,6 +35,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = AIBlogRole.Admin)]
         public async Task<IActionResult> Register(RegisterInfo registerInfo)
         {
             string username = registerInfo.Name;
@@ -61,6 +62,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = AIBlogRole.Admin)]
         public async Task<IActionResult> CreateRole(RoleCreateInfo roleCreateInfo)
         {
             var exist = await roleManager.RoleExistsAsync(roleCreateInfo.RoleName);
@@ -81,6 +83,7 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = AIBlogRole.Admin)]
         public async Task<IActionResult> UserToRole(string username, string rolename)
         {
             var user = await userManager.FindByNameAsync(username);
@@ -162,6 +165,17 @@ namespace WebApi.Controllers
                 await userManager.AccessFailedAsync(user);
                 return BadRequest("Password is incorrect.");
             }
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> CurrentUser()
+        {
+            await Task.CompletedTask;
+            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userName = this.User.FindFirstValue(ClaimTypes.Name);
+            var roleClaims = this.User.FindAll(ClaimTypes.Role);
+            return Ok(new CurrentUserInfo(userId!, userName!, roleClaims));
         }
     }
 }
