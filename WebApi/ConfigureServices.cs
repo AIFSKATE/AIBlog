@@ -1,13 +1,17 @@
-﻿using EFCore;
+﻿using Domain;
+using EFCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
 
 namespace WebApi
 {
     public static class ConfigureServices
     {
-        public static void ConfigureAIBlogDbContext(WebApplicationBuilder builder)
+        internal static void ConfigureAIBlogDbContext(WebApplicationBuilder builder)
         {
             builder.Services.AddDbContext<AIBlogDbContext>(opt =>
             {
@@ -36,6 +40,27 @@ namespace WebApi
                 .AddDefaultTokenProviders()
                 .AddRoleManager<RoleManager<Role>>()
                 .AddUserManager<UserManager<User>>();
+        }
+
+        internal static void ConfigureJWT(WebApplicationBuilder builder)
+        {
+            var service = builder.Services;
+            service.Configure<JWTOptions>(builder.Configuration.GetSection(JWTOptions.JWT));
+            service.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(x =>
+                {
+                    var jwtOpt = builder.Configuration.GetSection(JWTOptions.JWT).Get<JWTOptions>()!;
+                    var keyBytes = Encoding.UTF8.GetBytes(jwtOpt.SigningKey);
+                    var secKey = new SymmetricSecurityKey(keyBytes);
+                    x.TokenValidationParameters = new()
+                    {
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = secKey,
+                    };
+                });
         }
     }
 }

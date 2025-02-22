@@ -3,7 +3,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using WebApi.Identity;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using System.Text;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.Extensions.Options;
 
 namespace WebApi.Controllers
 {
@@ -11,13 +18,20 @@ namespace WebApi.Controllers
     [Route("[controller]/[Action]")]
     public class AccountController : ControllerBase
     {
-        RoleManager<Role> roleManager;
-        UserManager<User> userManager;
+        readonly RoleManager<Role> roleManager;
+        readonly UserManager<User> userManager;
+        readonly IConfiguration configuration;
+        readonly JWTOptions jwtOpt;
 
-        public AccountController(RoleManager<Role> roleManager, UserManager<User> userManager)
+        public AccountController(RoleManager<Role> roleManager,
+            UserManager<User> userManager,
+            IConfiguration configuration,
+            IOptionsSnapshot<JWTOptions> jwtOpt)
         {
             this.roleManager = roleManager;
             this.userManager = userManager;
+            this.configuration = configuration;
+            this.jwtOpt = jwtOpt.Value;
         }
 
         [HttpPost]
@@ -89,6 +103,65 @@ namespace WebApi.Controllers
                 }
             }
             return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Login([FromBody] LoginInfo loginInfo)
+        {
+            string userName = loginInfo.Name;
+            string password = loginInfo.Password;
+            var user = await userManager.FindByNameAsync(userName);
+            if (user == null)
+            {
+                return NotFound($"{userName} doesn't exist.");
+            }
+            if (await userManager.IsLockedOutAsync(user))
+            {
+                return BadRequest($"{userName} is locked");
+            }
+            var success = await userManager.CheckPasswordAsync(user, password);
+            if (success)
+            {
+                // 1 定义需要的Cliam信息
+                var claims = new List<Claim>(){
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(ClaimTypes.Name,user.UserName!),
+                };
+                var list = await userManager.GetRolesAsync(user);
+                foreach (var role in list)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, role));
+                }
+                //var jwtOpt = configuration.GetSection("Jwt").Get<JWTOptions>()!;
+
+                // 2 设置SecretKey
+                var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOpt.SigningKey));
+
+                // 3 设置加密算法
+                var algorithm = SecurityAlgorithms.HmacSha256;
+
+                // 4 生成签名凭证信息
+                var signingCredentials = new SigningCredentials(secretKey, algorithm);
+
+                // 5 设置Token过期时间
+                var expires = DateTime.Now.AddSeconds(jwtOpt.ExpireSeconds);
+
+                // 6 生成token
+                var securityToken = new JwtSecurityToken(
+                    claims: claims,
+                    expires: expires,
+                    signingCredentials: signingCredentials
+                );
+
+                var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
+                var token = jwtSecurityTokenHandler.WriteToken(securityToken);
+                return Ok(token);
+            }
+            else
+            {
+                await userManager.AccessFailedAsync(user);
+                return BadRequest("Password is incorrect.");
+            }
         }
     }
 }

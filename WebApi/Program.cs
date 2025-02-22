@@ -16,6 +16,7 @@ namespace WebApi
             builder.Services.AddSwaggerGen();
             builder.Services.AddDataProtection();
             ConfigureServices.ConfigureAIBlogDbContext(builder);
+            ConfigureServices.ConfigureJWT(builder);
 
             var app = builder.Build();
 
@@ -28,6 +29,7 @@ namespace WebApi
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 
