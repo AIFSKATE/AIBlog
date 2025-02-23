@@ -23,16 +23,19 @@ namespace WebApi.Controllers
         readonly UserManager<User> userManager;
         readonly IConfiguration configuration;
         readonly JWTOptions jwtOpt;
+        readonly ILogger<AccountController> logger;
 
         public AccountController(RoleManager<Role> roleManager,
             UserManager<User> userManager,
             IConfiguration configuration,
-            IOptionsSnapshot<JWTOptions> jwtOpt)
+            IOptionsSnapshot<JWTOptions> jwtOpt,
+            ILogger<AccountController> logger)
         {
             this.roleManager = roleManager;
             this.userManager = userManager;
             this.configuration = configuration;
             this.jwtOpt = jwtOpt.Value;
+            this.logger = logger;
         }
 
         [HttpPost]
@@ -110,6 +113,7 @@ namespace WebApi.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] LoginInfo loginInfo)
         {
+            logger.LogTrace($"{loginInfo.Name} tries to login");
             string userName = loginInfo.Name;
             string password = loginInfo.Password;
             var user = await userManager.FindByNameAsync(userName);
@@ -157,6 +161,9 @@ namespace WebApi.Controllers
 
                 var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
                 var token = jwtSecurityTokenHandler.WriteToken(securityToken);
+
+                logger.LogTrace($"{loginInfo.Name} login succesfully");
+
                 return Ok(token);
             }
             else

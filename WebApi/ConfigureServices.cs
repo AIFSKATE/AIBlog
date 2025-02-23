@@ -7,6 +7,7 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Domain.Account;
+using NLog.Web;
 
 namespace WebApi
 {
@@ -63,6 +64,13 @@ namespace WebApi
                         //ClockSkew = TimeSpan.Zero
                     };
                 });
+        }
+
+        internal static void ConfigureNLog(WebApplicationBuilder builder)
+        {
+            builder.Logging.ClearProviders();
+            builder.Logging.AddNLog("Config/NLog.config");
+            builder.Host.UseNLog();
         }
 
         internal static void ConfigureSwagger(WebApplicationBuilder builder)

@@ -17,6 +17,7 @@ namespace WebApi
             builder.Services.AddDataProtection();
             ConfigureServices.ConfigureAIBlogDbContext(builder);
             ConfigureServices.ConfigureJWT(builder);
+            ConfigureServices.ConfigureNLog(builder);
 
             var app = builder.Build();
 
