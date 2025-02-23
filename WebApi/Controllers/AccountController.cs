@@ -11,12 +11,14 @@ using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Extensions.Options;
 using Domain.Account;
+using WebApi.Filters;
 
 namespace WebApi.Controllers
 {
     [ApiController]
     [Route("[controller]/[Action]")]
     [Authorize(Roles = AIBlogRole.Admin)]
+    [TypeFilter<AccountExceptioncs>]
     public class AccountController : ControllerBase
     {
         readonly RoleManager<Role> roleManager;
@@ -174,7 +176,6 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         public async Task<IActionResult> CurrentUser()
         {
             await Task.CompletedTask;
@@ -182,6 +183,19 @@ namespace WebApi.Controllers
             var userName = this.User.FindFirstValue(ClaimTypes.Name);
             var roleClaims = this.User.FindAll(ClaimTypes.Role);
             return Ok(new CurrentUserInfo(userId!, userName!, roleClaims));
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<List<string>>> GetRoles()
+        {
+            var list = await roleManager.Roles.ToListAsync();
+            return Ok(list);
+        }
+
+        [HttpGet]
+        public string Exception()
+        {
+            throw new NotImplementedException("这是一个未实现的异常接口");
         }
     }
 }
