@@ -8,6 +8,9 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Domain.Account;
 using NLog.Web;
+using AutoMapper;
+using Mapper.Profiles;
+using System.Reflection;
 
 namespace WebApi
 {
@@ -64,6 +67,11 @@ namespace WebApi
                         //ClockSkew = TimeSpan.Zero
                     };
                 });
+        }
+
+        internal static void ConfigureMapper(WebApplicationBuilder builder)
+        {
+            builder.Services.AddAutoMapper(Assembly.Load(nameof(Mapper)));
         }
 
         internal static void ConfigureNLog(WebApplicationBuilder builder)

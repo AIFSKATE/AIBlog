@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace EFCore.Shared
 {
-    internal static class Consts
+    internal static class Tables
     {
         public const string Default = "AIBlog";
         public const string PostTable = Default + "_Post";
         public const string TagTable = Default + "_Tag";
         public const string PostTagTable = Default + "_PostTag";
+        public const string FriendLinkTable = Default + "_FriendLink";
     }
 }

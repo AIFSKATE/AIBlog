@@ -22,7 +22,7 @@ namespace EFCore.Data
     {
         public void Configure(EntityTypeBuilder<Post> builder)
         {
-            builder.ToTable(Consts.PostTable);//与哪一个表对应
+            builder.ToTable(Tables.PostTable);//与哪一个表对应
             builder.HasKey(t => t.Id);
             builder.Property(t => t.Title).HasMaxLength(50).IsRequired();
             builder.Property(t => t.CreationTime).IsRequired();
