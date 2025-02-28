@@ -22,7 +22,7 @@ namespace EFCore.Data
     {
         public void Configure(EntityTypeBuilder<FriendLink> builder)
         {
-            builder.ToTable(Tables.PostTable);//与哪一个表对应
+            builder.ToTable(Tables.FriendLinkTable);//与哪一个表对应
             builder.HasKey(t => t.Id);
             builder.Property(x => x.LinkUrl).IsRequired();
         }

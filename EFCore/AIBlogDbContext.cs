@@ -10,6 +10,7 @@ namespace EFCore
         public DbSet<Post> posts { get; set; }
         public DbSet<Tag> tags { get; set; }
         public DbSet<FriendLink> friends { get; set; }
+        public DbSet<Category> categories { get; set; }
 
         public AIBlogDbContext(DbContextOptions<AIBlogDbContext> options) : base(options)
         {

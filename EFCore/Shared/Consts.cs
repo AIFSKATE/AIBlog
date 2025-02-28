@@ -13,5 +13,6 @@ namespace EFCore.Shared
         public const string TagTable = Default + "_Tag";
         public const string PostTagTable = Default + "_PostTag";
         public const string FriendLinkTable = Default + "_FriendLink";
+        public const string CategoryTable = Default + "_Category";
     }
 }

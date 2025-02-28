@@ -1,6 +1,10 @@
 ﻿using AutoMapper;
+using Domain.Post;
+using EFCore;
 using Mapper.DTO;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace WebApi.Controllers
 {
@@ -9,10 +13,16 @@ namespace WebApi.Controllers
     public class PostController : ControllerBase
     {
         readonly IMapper mapper;
+        readonly IMemoryCache memoryCache;
+        readonly AIBlogDbContext dbContext;
 
-        public PostController(IMapper mapper)
+        public PostController(IMapper mapper,
+            IMemoryCache memoryCache,
+            AIBlogDbContext dbContext)
         {
             this.mapper = mapper;
+            this.memoryCache = memoryCache;
+            this.dbContext = dbContext;
         }
 
         [HttpPost]
@@ -20,6 +30,17 @@ namespace WebApi.Controllers
         {
             await Task.CompletedTask;
             return Ok();
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<QueryPostDto>> QueryPost(PagingInput input)
+        {
+            int cnt = dbContext.posts.Count();
+            var list = dbContext.posts.AsNoTracking().
+                OrderByDescending(x => x.CreationTime)
+                .Skip((input.Page - 1) * input.Limit)
+                .Take(input.Limit);
+
         }
     }
 }
