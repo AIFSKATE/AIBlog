@@ -11,11 +11,20 @@ namespace Mapper.DTO
         /// <summary>
         /// 年份
         /// </summary>
-        public int Year { get; set; }
+        public int Count { get; set; }
 
         /// <summary>
         /// Posts
         /// </summary>
-        public IEnumerable<PostBriefDto> Posts { get; set; }
+        public List<PostBriefDto> Posts { get; set; }
+
+        public QueryPostDto(
+            int Count,
+            List<PostBriefDto> Posts
+            )
+        {
+            this.Count = Count;
+            this.Posts = Posts;
+        }
     }
 }

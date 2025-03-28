@@ -4,6 +4,7 @@ using EFCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EFCore.Migrations
 {
     [DbContext(typeof(AIBlogDbContext))]
-    partial class AIBlogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250328025023_PostIsDeleted")]
+    partial class PostIsDeleted
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -72,7 +75,7 @@ namespace EFCore.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("CategoryId")
+                    b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreationTime")
@@ -86,6 +89,7 @@ namespace EFCore.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Markdown")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Title")
@@ -94,6 +98,7 @@ namespace EFCore.Migrations
                         .HasColumnType("varchar(50)");
 
                     b.Property<string>("Url")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
@@ -341,7 +346,9 @@ namespace EFCore.Migrations
                 {
                     b.HasOne("EFCore.Data.Category", "Category")
                         .WithMany("Posts")
-                        .HasForeignKey("CategoryId");
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Category");
                 });

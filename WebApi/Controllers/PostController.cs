@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Domain.Post;
 using EFCore;
+using EFCore.Data;
 using Mapper.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -28,18 +29,24 @@ namespace WebApi.Controllers
         [HttpPost]
         public async Task<IActionResult> CreatePost(PostDTO postDTO)
         {
-            await Task.CompletedTask;
+            var post = mapper.Map<Post>(postDTO);
+            dbContext.Add(post);
+            await dbContext.SaveChangesAsync();
             return Ok();
         }
 
         [HttpGet]
-        public async Task<ActionResult<QueryPostDto>> QueryPost(PagingInput input)
+        public async Task<ActionResult<QueryPostDto>> QueryPosts([FromQuery] PagingInput input)
         {
             int cnt = dbContext.posts.Count();
-            var list = dbContext.posts.AsNoTracking().
-                OrderByDescending(x => x.CreationTime)
+            var list = dbContext.posts.AsNoTracking()
+                .Where(x => x.IsDeleted == 0)
+                .OrderBy(x => x.CreationTime)
                 .Skip((input.Page - 1) * input.Limit)
                 .Take(input.Limit);
+            var res = list.Select(p => mapper.Map<PostBriefDto>(p)).ToList();
+            await Task.CompletedTask;
+            return Ok(new QueryPostDto(cnt, res));
 
         }
     }

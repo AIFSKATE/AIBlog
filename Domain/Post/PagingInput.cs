@@ -18,7 +18,7 @@ namespace Domain.Post
         /// <summary>
         /// 限制条数
         /// </summary>
-        [Range(10, 30)]
+        [Range(5, 30)]
         public int Limit { get; set; } = 10;
     }
 }

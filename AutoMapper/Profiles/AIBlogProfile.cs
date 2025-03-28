@@ -9,11 +9,14 @@ using System.Threading.Tasks;
 
 namespace Mapper.Profiles
 {
-    public class PostProfile : Profile
+    public class AIBlogProfile:Profile
     {
-        public PostProfile()
+        public AIBlogProfile()
         {
+            CreateMap<FriendLink, FriendLinkDTO>().ReverseMap();
             CreateMap<Post, PostDTO>().ReverseMap();
+            CreateMap<Post, PostBriefDto>();
+            CreateMap<Tag, TagDTO>().ReverseMap();
         }
     }
 }

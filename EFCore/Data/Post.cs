@@ -13,12 +13,13 @@ namespace EFCore.Data
     {
         public int Id { get; set; }
         public string Title { get; set; }
-        public string Url { get; set; }
+        public string? Url { get; set; }
         public string Html { get; set; }
-        public string Markdown { get; set; }
-        public List<Tag> Tags { get; set; }
+        public int IsDeleted { get; set; } = 0;
+        public string? Markdown { get; set; }
+        public List<Tag>? Tags { get; set; }
         public DateTime CreationTime { get; set; }
-        public Category Category { get; set; }
+        public Category? Category { get; set; }
     }
 
     class PostEntityConfig : IEntityTypeConfiguration<Post>
