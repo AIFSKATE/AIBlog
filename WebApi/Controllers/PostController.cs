@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using Domain.Account;
 using Domain.Post;
 using EFCore;
 using EFCore.Data;
 using Mapper.DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
@@ -11,6 +13,7 @@ namespace WebApi.Controllers
 {
     [ApiController]
     [Route("[controller]/[Action]")]
+    [Authorize(Roles = AIBlogRole.Admin)]
     public class PostController : ControllerBase
     {
         readonly IMapper mapper;
@@ -27,18 +30,30 @@ namespace WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreatePost(PostDTO postDTO)
+        public async Task<IActionResult> CreatePost(PostCreation postcreation)
         {
-            var post = mapper.Map<Post>(postDTO);
+            var post = mapper.Map<Post>(postcreation);
+            var categoryID = postcreation?.CategoryID;
+            if (categoryID != null)
+            {
+                var category = await dbContext.categories.SingleOrDefaultAsync(c => c.Id == categoryID);
+                if (category != null)
+                {
+                    post.Category = category;
+                }
+            }
+            post.Tags = dbContext.tags.Where(t => postcreation!.TagIDs.Contains(t.Id)).ToList();
+
             dbContext.Add(post);
             await dbContext.SaveChangesAsync();
             return Ok();
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<QueryPostDto>> QueryPosts([FromQuery] PagingInput input)
         {
-            int cnt = dbContext.posts.Count();
+            int cnt = dbContext.posts.Count(x => x.IsDeleted == 0);
             var list = dbContext.posts.AsNoTracking()
                 .Where(x => x.IsDeleted == 0)
                 .OrderBy(x => x.CreationTime)
@@ -48,6 +63,32 @@ namespace WebApi.Controllers
             await Task.CompletedTask;
             return Ok(new QueryPostDto(cnt, res));
 
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdatePost(PostDTO postDTO)
+        {
+            Post? post = dbContext.posts.SingleOrDefault(p => p.Id == postDTO.Id);
+            if (post == null)
+            {
+                return BadRequest("This post does not exist");
+            }
+            mapper.Map<PostDTO, Post>(postDTO, post);
+            await dbContext.SaveChangesAsync();
+            return Ok();
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeletePost(int postId)
+        {
+            Post? post = dbContext.posts.SingleOrDefault(p => p.Id == postId);
+            if (post == null)
+            {
+                return BadRequest("This post does not exist");
+            }
+            post.IsDeleted = 1;
+            await dbContext.SaveChangesAsync();
+            return Ok();
         }
     }
 }

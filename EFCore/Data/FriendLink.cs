@@ -16,6 +16,10 @@ namespace EFCore.Data
         public string Title { get; set; }
 
         public string LinkUrl { get; set; }
+
+        public int IsDeleted { get; set; }
+
+        public DateTime CreationTime { get; set; } = DateTime.Now;
     }
 
     class FriendLinkEntityConfig : IEntityTypeConfiguration<FriendLink>

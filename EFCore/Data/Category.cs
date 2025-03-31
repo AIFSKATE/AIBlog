@@ -13,7 +13,8 @@ namespace EFCore.Data
     {
         public int Id { get; set; }
         public string CategoryName { get; set; }
-        public string DisplayName { get; set; }
+        public string Description { get; set; } = string.Empty;
+        public int IsDeleted { get; set; } = 0;
         public List<Post> Posts { get; set; }
     }
 
@@ -22,6 +23,7 @@ namespace EFCore.Data
         public void Configure(EntityTypeBuilder<Category> builder)
         {
             builder.ToTable(Tables.CategoryTable);//与哪一个表对应
+            builder.Property(c => c.CategoryName).IsRequired();
             builder.HasKey(t => t.Id);
         }
     }
