@@ -17,12 +17,16 @@ namespace WebApi.Controllers
     {
         readonly IMapper mapper;
         readonly AIBlogDbContext dbContext;
+        readonly ILogger<FriendLinkController> logger;
+
 
         public FriendLinkController(IMapper mapper,
-            AIBlogDbContext dbContext)
+            AIBlogDbContext dbContext,
+            ILogger<FriendLinkController> logger)
         {
             this.mapper = mapper;
             this.dbContext = dbContext;
+            this.logger = logger;
         }
 
         [HttpPost]
@@ -30,6 +34,7 @@ namespace WebApi.Controllers
         {
             var friendlink = mapper.Map<FriendLink>(friendLinkCreation);
             dbContext.friends.Add(friendlink);
+            logger.LogInformation($"Admin {User.Identity?.Name} added a new friend link: {friendLinkCreation.Title} - {friendLinkCreation.LinkUrl}");
             await dbContext.SaveChangesAsync();
             return Ok();
         }

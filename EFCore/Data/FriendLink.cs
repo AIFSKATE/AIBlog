@@ -17,7 +17,7 @@ namespace EFCore.Data
 
         public string LinkUrl { get; set; }
 
-        public int IsDeleted { get; set; }
+        public int IsDeleted { get; set; } = 0; // 默认值为0，表示未删除
 
         public DateTime CreationTime { get; set; } = DateTime.Now;
     }

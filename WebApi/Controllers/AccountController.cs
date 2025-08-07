@@ -130,6 +130,8 @@ namespace WebApi.Controllers
             var success = await userManager.CheckPasswordAsync(user, password);
             if (success)
             {
+                await userManager.ResetAccessFailedCountAsync(user);
+
                 // 1 定义需要的Cliam信息
                 var claims = new List<Claim>(){
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
