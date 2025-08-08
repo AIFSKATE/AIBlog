@@ -16,34 +16,36 @@ namespace WebApi.Controllers
     public class CategotyController : ControllerBase
     {
         readonly IMapper mapper;
+        readonly ILogger<CategotyController> logger;
         readonly AIBlogDbContext dbContext;
 
         public CategotyController(IMapper mapper,
-            AIBlogDbContext dbContext)
+            AIBlogDbContext dbContext,
+            ILogger<CategotyController> logger)
         {
             this.mapper = mapper;
             this.dbContext = dbContext;
+            this.logger = logger;
         }
 
         [HttpPost]
         public async Task<IActionResult> AddCategory(CategoryCreation categoryCreation)
         {
             var category = mapper.Map<Category>(categoryCreation);
-            category.Posts = dbContext.posts.Where(p => categoryCreation.PostIDs.Contains(p.Id)).ToList();
             dbContext.categories.Add(category);
             await dbContext.SaveChangesAsync();
+            logger.LogTrace($"Category added: {category.CategoryName}");
             return Ok();
         }
 
         [HttpGet]
-        [AllowAnonymous]
         public async Task<ActionResult> QueryCategories()
         {
-            var list = dbContext.friends.AsNoTracking()
-                .Where(f => f.IsDeleted == 0)
-                .Select(f => mapper.Map<CategoryDTO>(f)).ToList();
+            var list = dbContext.categories.AsNoTracking()
+                .Where(f => f.IsDeleted == 0).ToList();
+            var ret = mapper.Map<List<CategoryDTO>>(list);
             await Task.CompletedTask;
-            return Ok(list);
+            return Ok(ret);
         }
 
         [HttpDelete]
@@ -55,6 +57,7 @@ namespace WebApi.Controllers
                 return BadRequest("This category does not exist");
             }
             category.IsDeleted = 1;
+            logger.LogTrace($"Category deleted: {category.CategoryName}");
             await dbContext.SaveChangesAsync();
             return Ok();
         }
@@ -69,7 +72,24 @@ namespace WebApi.Controllers
             }
             mapper.Map(categoryDTO, category);
             await dbContext.SaveChangesAsync();
+            logger.LogTrace($"Category updated: {category.CategoryName}");
             return Ok();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> QueryPostsUnderCategory(int categoryId)
+        {
+            var posts = dbContext.categories
+                .Where(c => c.Id == categoryId && c.IsDeleted == 0)
+                .Include(c => c.Posts)
+                .SelectMany(c => c.Posts)
+                .ToList();
+            if (!posts.Any() || posts == null)
+            {
+                return NotFound("This category does not exist or no posts found under this category.");
+            }
+            await Task.CompletedTask;
+            return Ok(posts);
         }
     }
 }

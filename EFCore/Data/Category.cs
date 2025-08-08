@@ -14,8 +14,9 @@ namespace EFCore.Data
         public int Id { get; set; }
         public string CategoryName { get; set; }
         public string Description { get; set; } = string.Empty;
+        public DateTime CreationTime { get; set; } = DateTime.Now;
         public int IsDeleted { get; set; } = 0;
-        public List<Post> Posts { get; set; }
+        public List<Post> Posts { get; set; } = new List<Post>();
     }
 
     class CategoryEntityConfig : IEntityTypeConfiguration<Category>

@@ -15,14 +15,16 @@ namespace Mapper.Profiles
         public AIBlogProfile()
         {
             CreateMap<FriendLink, FriendLinkDTO>().ReverseMap();
+            CreateMap<FriendLinkCreation, FriendLink>();
+
             CreateMap<Post, PostDTO>().ReverseMap();
             CreateMap<Post, PostBriefDto>().ReverseMap();
-
             CreateMap<PostCreation, Post>();
-            CreateMap<FriendLinkCreation, FriendLink>();
-            CreateMap<CategoryCreation, Category>();
 
             CreateMap<Tag, TagDTO>().ReverseMap();
+
+
+            CreateMap<CategoryCreation, Category>();
             CreateMap<Category, CategoryDTO>().ReverseMap();
         }
     }

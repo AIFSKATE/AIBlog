@@ -10,7 +10,5 @@ namespace Domain.Post
     {
         public string CategoryName { get; set; }
         public string Description { get; set; } = string.Empty;
-        public List<int> PostIDs { get; set; }
-
     }
 }
