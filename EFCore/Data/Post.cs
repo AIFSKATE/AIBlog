@@ -18,8 +18,9 @@ namespace EFCore.Data
         public int IsDeleted { get; set; } = 0;
         public string? Markdown { get; set; }
         public List<Tag>? Tags { get; set; }
-        public DateTime CreationTime { get; set; }
+        public DateTime CreationTime { get; set; } = DateTime.Now;
         public Category? Category { get; set; }
+        public int? CategoryId { get; set; }
     }
 
     class PostEntityConfig : IEntityTypeConfiguration<Post>
@@ -30,7 +31,7 @@ namespace EFCore.Data
             builder.HasKey(t => t.Id);
             builder.Property(t => t.Title).HasMaxLength(50).IsRequired();
             builder.Property(t => t.CreationTime).IsRequired();
-            builder.HasOne<Category>(c => c.Category).WithMany(p => p.Posts);
+            builder.HasOne<Category>(c => c.Category).WithMany(p => p.Posts).HasForeignKey(p => p.CategoryId);
         }
     }
 }

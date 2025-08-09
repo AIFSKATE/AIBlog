@@ -33,13 +33,17 @@ namespace WebApi.Controllers
         public async Task<IActionResult> CreatePost(PostCreation postcreation)
         {
             var post = mapper.Map<Post>(postcreation);
-            var categoryID = postcreation?.CategoryID;
+            var categoryID = postcreation?.CategoryId;
             if (categoryID != null)
             {
                 var category = await dbContext.categories.SingleOrDefaultAsync(c => c.Id == categoryID);
                 if (category != null)
                 {
                     post.Category = category;
+                }
+                else
+                {
+                    return BadRequest("This category does not exist");
                 }
             }
             post.Tags = dbContext.tags.Where(t => postcreation!.TagIDs.Contains(t.Id)).ToList();
@@ -51,7 +55,7 @@ namespace WebApi.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<QueryPostDto>> QueryPosts([FromQuery] PagingInput input)
+        public async Task<IActionResult> QueryPosts([FromQuery] PagingInput input)
         {
             int cnt = dbContext.posts.Count(x => x.IsDeleted == 0);
             var list = dbContext.posts.AsNoTracking()
@@ -65,15 +69,32 @@ namespace WebApi.Controllers
 
         }
 
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetPost(int postId)
+        {
+            var post = await dbContext.posts.Include(p => p.Tags)
+                .SingleOrDefaultAsync(p => p.Id == postId && p.IsDeleted == 0);
+            if (post == null)
+            {
+                return BadRequest("This post does not exist");
+            }
+            var ret = mapper.Map<PostDTO>(post);
+            return Ok(ret);
+        }
+
         [HttpPut]
         public async Task<IActionResult> UpdatePost(PostDTO postDTO)
         {
-            Post? post = dbContext.posts.SingleOrDefault(p => p.Id == postDTO.Id);
+            Post? post = dbContext.posts.Include(p => p.Tags).SingleOrDefault(p => p.Id == postDTO.Id);
             if (post == null)
             {
                 return BadRequest("This post does not exist");
             }
             mapper.Map<PostDTO, Post>(postDTO, post);
+
+            post.Tags = dbContext.tags.Where(t => postDTO.Tags.Select(t => t.Id).Contains(t.Id)).ToList();
+
             await dbContext.SaveChangesAsync();
             return Ok();
         }

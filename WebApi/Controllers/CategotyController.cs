@@ -77,19 +77,24 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> QueryPostsUnderCategory(int categoryId)
+        public async Task<IActionResult> QueryPostsUnderCategory([FromQuery] PagingInput input, int categoryId)
         {
             var posts = dbContext.categories
-                .Where(c => c.Id == categoryId && c.IsDeleted == 0)
-                .Include(c => c.Posts)
-                .SelectMany(c => c.Posts)
-                .ToList();
+                .Where(c => c.Id == categoryId && c.IsDeleted == 0);
             if (!posts.Any() || posts == null)
             {
                 return NotFound("This category does not exist or no posts found under this category.");
             }
+            var allPosts = posts.Include(c => c.Posts).SelectMany(c => c.Posts).Where(p => p.IsDeleted == 0);
+            var cnt = allPosts.Count();
+
+            var ret = allPosts
+                .Skip((input.Page - 1) * input.Limit)
+                .Take(input.Limit)
+                .ToList();
+            var res = mapper.Map<List<PostBriefDto>>(ret);
             await Task.CompletedTask;
-            return Ok(posts);
+            return Ok(new QueryPostDto(cnt, res));
         }
     }
 }

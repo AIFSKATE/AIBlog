@@ -12,8 +12,8 @@ namespace Mapper.DTO
         public int Id { get; set; }
         public string Title { get; set; }
         public string Html { get; set; }
-        public List<TagDTO> Tags { get; set; } = new List<TagDTO>();
-        public CategoryDTO? Category { get; set; }
+        public List<TagDTO> Tags { get; set; } = new();
+        public int? CategoryId { get; set; }
         public DateTime CreationTime { get; set; }
     }
 }
