@@ -23,7 +23,7 @@ namespace EFCore.Data
             builder.ToTable(Tables.TagTable);//与哪一个表对应
             builder.HasKey(t => t.Id);
             builder.Property(b => b.TagName).HasMaxLength(50).IsRequired();
-            builder.HasMany<Post>(t=>t.Posts).WithMany(p=>p.Tags).UsingEntity(j=>j.ToTable(Tables.PostTagTable));
+            builder.HasMany<Post>(t => t.Posts).WithMany(p => p.Tags).UsingEntity(j => j.ToTable(Tables.PostTagTable));
         }
     }
 }
