@@ -10,6 +10,7 @@ namespace WebApi
         {
             var builder = WebApplication.CreateBuilder(args);
 
+
             // Add services to the container.
             builder.Services.AddControllers().AddJsonOptions(options =>
             {
@@ -20,6 +21,7 @@ namespace WebApi
             builder.Services.AddMemoryCache();
             builder.Services.AddDataProtection();
             ConfigureServices.ConfigureSwagger(builder);
+            ConfigureServices.ConfigureCORS(builder);
             ConfigureServices.ConfigureAIBlogDbContext(builder);
             ConfigureServices.ConfigureJWT(builder);
             ConfigureServices.ConfigureNLog(builder);
@@ -35,6 +37,8 @@ namespace WebApi
             }
 
             app.UseHttpsRedirection();
+
+            app.UseCors();
 
             app.UseAuthentication();
             app.UseAuthorization();

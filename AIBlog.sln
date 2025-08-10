@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mapper", "AutoMapper\Mapper.csproj", "{127D44ED-067F-4B4F-B238-183716732B6F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazor", "Blazor\Blazor.csproj", "{A33FF584-B696-4851-8CF0-288716605EDA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{127D44ED-067F-4B4F-B238-183716732B6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{127D44ED-067F-4B4F-B238-183716732B6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{127D44ED-067F-4B4F-B238-183716732B6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A33FF584-B696-4851-8CF0-288716605EDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A33FF584-B696-4851-8CF0-288716605EDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A33FF584-B696-4851-8CF0-288716605EDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A33FF584-B696-4851-8CF0-288716605EDA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

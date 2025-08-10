@@ -47,6 +47,22 @@ namespace WebApi
                 .AddUserManager<UserManager<User>>();
         }
 
+        internal static void ConfigureCORS(WebApplicationBuilder builder)
+        {
+            //CORS policy
+            builder.Services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(
+                    policy =>
+                    {
+                        policy.WithOrigins(builder.Configuration.GetSection("CORS:Origins").Get<string[]>()!)
+                               .AllowAnyMethod()
+                               .AllowAnyHeader();
+                    });
+            }
+            );
+        }
+
         internal static void ConfigureJWT(WebApplicationBuilder builder)
         {
             var service = builder.Services;
