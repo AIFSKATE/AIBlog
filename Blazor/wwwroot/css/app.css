@@ -184,7 +184,8 @@ template {
 
 @font-face {
     font-family: 'Fira Code Medium';
-    src: url('https://static.meowv.com/fonts/FiraCode-Medium.woff2') format('woff2'), url("https://static.meowv.com/fonts/FiraCode-Medium.woff") format("woff");
+    src: url('../Fira_Code_v6.2/woff2/FiraCode-Medium.woff2') format('woff2'),
+        url("../Fira_Code_v6.2/woff/FiraCode-Medium.woff") format("woff");
     font-weight: 500;
     font-style: normal;
 }

@@ -1,4 +1,6 @@
-﻿<!-- Header.razor -->
+﻿@inject IJSRuntime JSRuntime
+
+<!-- Header.razor -->
 <header>
     <nav class="navbar">
         <div class="container">
@@ -12,7 +14,7 @@
                 <NavLink class="menu-item" href="categories">Categories</NavLink>
                 <NavLink class="menu-item" href="tags">Tags</NavLink>
                 <NavLink class="menu-item apps" href="apps">Apps</NavLink>
-                <input id="switch_default" type="checkbox" class="switch_default" />
+                <input id="switch_default" type="checkbox" class="switch_default" @onchange="SwitchTheme" checked="@(currentTheme == "Dark")" />
                 <label for="switch_default" class="toggleBtn"></label>
             </div>
         </div>
@@ -22,11 +24,11 @@
             <div class="navbar-header">
                 <div>
                     <NavLink class="menu-item" href="" Match="NavLinkMatch.All">AIBlog</NavLink>
-                    <NavLink>&nbsp;·&nbsp;Light</NavLink>
+                    <NavLink @onclick="SwitchTheme">&nbsp;·&nbsp;@currentTheme</NavLink>
                 </div>
-                <div class="menu-toggle">&#9776; Menu</div>
+                <div class="menu-toggle" @onclick="ToggleNavMenu">&#9776; Menu</div>
             </div>
-            <div class="menu">
+            <div class="menu @NavMenuCssClass">
                 <NavLink class="menu-item" href="posts">Posts</NavLink>
                 <NavLink class="menu-item" href="categories">Categories</NavLink>
                 <NavLink class="menu-item" href="tags">Tags</NavLink>
