@@ -1,6 +1,5 @@
 ﻿
 using Blazor.Commons;
-using Microsoft.JSInterop;
 
 namespace Blazor.Layout
 {

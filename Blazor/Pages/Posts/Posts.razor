@@ -1,0 +1,42 @@
+﻿@page "/posts/"
+@page "/posts/page/{page:int}"
+@page "/posts/{page:int}"
+
+@if (PostData == null)
+{
+    <Loading />
+}
+else
+{
+    <div class="post-wrap archive">
+        @if (PostData.Posts.Any())
+        {
+            @foreach (var item in PostData.Posts)
+            {
+                <article class="archive-item">
+                    <NavLink href="@("/post" + item.Url)">@item.Title</NavLink>
+                    <span class="archive-item-date">@item.CreationTime</span>
+                </article>
+            }
+            <nav class="pagination">
+                @for (int i = 1; i <= TotalPage; i++)
+                {
+                    var _page = i;
+
+                    if (page == _page)
+                    {
+                        <span class="page-number current">@_page</span>
+                    }
+                    else
+                    {
+                        <a class="page-number" @onclick="@(() => RenderPage(_page))" href="/posts/@_page">@_page</a>
+                    }
+                }
+            </nav>
+        }
+        else
+        {
+            <ErrorTip />
+        }
+    </div>
+}

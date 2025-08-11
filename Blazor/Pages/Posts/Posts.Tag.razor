@@ -1,0 +1,12 @@
+﻿//Posts.Tag.razor
+@page "/tag/{name}"
+
+<Loading />
+
+@code {
+    /// <summary>
+    /// 标签名称参数
+    /// </summary>
+    [Parameter]
+    public string name { get; set; }
+}

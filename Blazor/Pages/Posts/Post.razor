@@ -1,0 +1,18 @@
+﻿//Post.razor
+@page "/post/{year:int}/{month:int}/{day:int}/{name}"
+
+<Loading />
+
+@code {
+    [Parameter]
+    public int year { get; set; }
+
+    [Parameter]
+    public int month { get; set; }
+
+    [Parameter]
+    public int day { get; set; }
+
+    [Parameter]
+    public string name { get; set; }
+}

@@ -1,4 +1,5 @@
-﻿using Microsoft.JSInterop;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using System.Threading.Tasks;
 
 namespace Blazor.Commons
@@ -6,10 +7,12 @@ namespace Blazor.Commons
     public class Utils
     {
         private readonly IJSRuntime _jsRuntime;
+        private readonly NavigationManager _navigationManager;
 
-        public Utils(IJSRuntime jsRuntime)
+        public Utils(IJSRuntime jsRuntime, NavigationManager navigationManager)
         {
             _jsRuntime = jsRuntime;
+            _navigationManager = navigationManager;
         }
 
         /// <summary>
@@ -54,6 +57,19 @@ namespace Blazor.Commons
         public async Task<string> GetStorageAsync(string name)
         {
             return await InvokeAsync<string>("window.func.getStorage", name);
+        }
+
+        /// <summary>
+        /// 跳转指定URL
+        /// </summary>
+        /// <param name="uri"></param>
+        /// <param name="forceLoad">true，绕过路由刷新页面</param>
+        /// <returns></returns>
+        public async Task RenderPage(string url, bool forceLoad = true)
+        {
+            _navigationManager.NavigateTo(url, forceLoad);
+
+            await Task.CompletedTask;
         }
     }
 }
