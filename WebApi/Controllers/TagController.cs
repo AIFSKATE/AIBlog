@@ -57,6 +57,7 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult> QueryAllTags()
         {
             var list = dbContext.tags.AsNoTracking().ToList();

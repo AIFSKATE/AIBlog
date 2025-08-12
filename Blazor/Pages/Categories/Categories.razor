@@ -1,4 +1,36 @@
-﻿//Categories.razor
-@page "/categories"
-
-<Loading />
+﻿@page "/categories"
+@if (categories == null)
+{
+    <Loading />
+}
+else
+{
+    <div class="container">
+        <div class="post-wrap categories">
+            <h2 class="post-title">-&nbsp;Categories&nbsp;-</h2>
+            <div class="categories-card">
+                @if (categories != null && categories.Any())
+                {
+                    @foreach (var item in categories)
+                    {
+                        <div class="card-item">
+                            <div class="categories">
+                                <a href="/category/@item.Id/@item.CategoryName/">
+                                    <h3>
+                                        <i class="iconfont iconcode" style="padding-right:3px"></i>
+                                        @item.CategoryName
+                                    </h3>
+                                    <small>(@item.Description)</small>
+                                </a>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <ErrorTip />
+                }
+            </div>
+        </div>
+    </div>
+}

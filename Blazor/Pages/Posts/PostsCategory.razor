@@ -1,0 +1,34 @@
+﻿@page "/category/{Id:int}/{categoryName}"
+
+
+@if (PostData == null)
+{
+    <Loading />
+}
+else
+{
+    <div class="container">
+        <div class="post-wrap tags">
+            @if (categoryName != null)
+            {
+                <h2 class="post-title">-&nbsp;Category&nbsp;·&nbsp;@categoryName&nbsp;-</h2>
+            }
+        </div>
+        <div class="post-wrap archive">
+            @if (PostData.Count > 0)
+            {
+                @foreach (var item in PostData.Posts)
+                {
+                    <article class="archive-item">
+                        <NavLink href="@("/post" + item.Url)">@item.Title</NavLink>
+                        <span class="archive-item-date">@item.CreationTime</span>
+                    </article>
+                }
+            }
+            else
+            {
+                <ErrorTip />
+            }
+        </div>
+    </div>
+}

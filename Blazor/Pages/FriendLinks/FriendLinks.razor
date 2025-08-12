@@ -1,4 +1,33 @@
-﻿//FriendLinks.razor
-@page "/friendlinks"
+﻿@page "/friendlinks"
 
-<Loading />
+@if (friendLinks == null)
+{
+    <Loading />
+}
+else
+{
+    <div class="container">
+        <div class="post-wrap categories">
+            <h2 class="post-title">-&nbsp;FriendLinks&nbsp;-</h2>
+            <div class="categories-card">
+                @if (friendLinks.Any())
+                {
+                    @foreach (var item in friendLinks)
+                    {
+                        <div class="card-item">
+                            <div class="categories">
+                                <a target="_blank" href="@item.LinkUrl">
+                                    <h3>@item.Title</h3>
+                                </a>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <ErrorTip />
+                }
+            </div>
+        </div>
+    </div>
+}

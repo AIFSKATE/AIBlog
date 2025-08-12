@@ -39,6 +39,7 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult> QueryCategories()
         {
             var list = dbContext.categories.AsNoTracking()
@@ -77,6 +78,7 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> QueryPostsUnderCategory([FromQuery] PagingInput input, int categoryId)
         {
             var posts = dbContext.categories

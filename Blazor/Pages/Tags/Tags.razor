@@ -1,4 +1,29 @@
-﻿//Tags.razor
-@page "/tags"
+﻿@page "/tags"
 
-<Loading />
+
+@if (PostTags == null)
+{
+    <Loading />
+}
+else
+{
+    <div class="container">
+        <div class="post-wrap tags">
+            <h2 class="post-title">-&nbsp;Tags&nbsp;-</h2>
+            <div class="tag-cloud-tags">
+                @if (PostTags.Any())
+                {
+                    @foreach (var item in PostTags)
+                    {
+                        @* <a href="/tag/@item.TagName/">@item.TagName<small>(@item.Count)</small></a> *@
+                        <a href="/tag/@item.TagName/">@item.TagName</a>
+                    }
+                }
+                else
+                {
+                    <ErrorTip />
+                }
+            </div>
+        </div>
+    </div>
+}
