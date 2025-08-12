@@ -1,0 +1,49 @@
+﻿@page "/tag/{id:int}"
+
+
+@if (PostData == null)
+{
+    <Loading />
+}
+else
+{
+    <div class="container">
+        <div class="post-wrap tags">
+            @if (TagName != null)
+            {
+                <h2 class="post-title">-&nbsp;Tag&nbsp;·&nbsp;@TagName&nbsp;-</h2>
+            }
+        </div>
+        <div class="post-wrap archive">
+            @if (PostData.Count > 0)
+            {
+                @foreach (var item in PostData.Posts)
+                {
+                    <article class="archive-item">
+                        <NavLink href="@("/post" + item.Url)">@item.Title</NavLink>
+                        <span class="archive-item-date">@item.CreationTime</span>
+                    </article>
+                }
+                <nav class="pagination">
+                    @for (int i = 1; i <= TotalPage; i++)
+                    {
+                        var _page = i;
+
+                        if (page == _page)
+                        {
+                            <span class="page-number current">@_page</span>
+                        }
+                        else
+                        {
+                            <a class="page-number" @onclick="@(() => RenderPage(_page))">@_page</a>
+                        }
+                    }
+                </nav>
+            }
+            else
+            {
+                <ErrorTip />
+            }
+        </div>
+    </div>
+}

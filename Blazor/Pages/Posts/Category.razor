@@ -1,4 +1,4 @@
-﻿@page "/category/{Id:int}/{categoryName}"
+﻿@page "/category/{Id:int}"
 
 
 @if (PostData == null)
@@ -24,6 +24,21 @@ else
                         <span class="archive-item-date">@item.CreationTime</span>
                     </article>
                 }
+                <nav class="pagination">
+                    @for (int i = 1; i <= TotalPage; i++)
+                    {
+                        var _page = i;
+
+                        if (page == _page)
+                        {
+                            <span class="page-number current">@_page</span>
+                        }
+                        else
+                        {
+                            <a class="page-number" @onclick="@(() => RenderPage(_page))">@_page</a>
+                        }
+                    }
+                </nav>
             }
             else
             {

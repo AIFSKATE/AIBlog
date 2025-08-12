@@ -6,7 +6,7 @@ using static System.Net.WebRequestMethods;
 
 namespace Blazor.Pages.Posts
 {
-    public partial class PostsCategory
+    public partial class Category
     {
 
         /// <summary>
@@ -16,9 +16,8 @@ namespace Blazor.Pages.Posts
         public int? page { get; set; }
         [Parameter]
         public int Id { get; set; }
-        [Parameter]
-        public string categoryName { get; set; }
 
+        public string categoryName { get; set; }
         private int TotalPage;
         private int Limit = 15;
 
@@ -35,8 +34,11 @@ namespace Blazor.Pages.Posts
 
         private async Task RenderPage(int? page)
         {
+            this.page = page;
             // 获取数据
             PostData = await HttpClient.GetFromJsonAsync<QueryPostDto>($"Categoty/QueryPostsUnderCategory?Page={page}&Limit={Limit}&categoryId={Id}");
+            categoryName = PostData.Info ?? string.Empty;
+
             // 计算总页码
             TotalPage = (int)Math.Ceiling((PostData.Count / (double)Limit));
             await InvokeAsync(StateHasChanged);

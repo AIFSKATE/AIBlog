@@ -84,21 +84,23 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> QueryPostsUnderTag(int tagId, [FromQuery] PagingInput page)
+        [AllowAnonymous]
+        public async Task<IActionResult> QueryPostsUnderTag(int tagId, [FromQuery] PagingInput input)
         {
             Tag? tag = dbContext.tags.Include(t => t.Posts).AsNoTracking().SingleOrDefault(t => t.Id == tagId);
             if (tag == null)
             {
                 return BadRequest("This tag does not exist");
             }
+            var info = tag.TagName;
             var cnt = tag.Posts.Count(p => p.IsDeleted == 0);
             var list = tag.Posts.Where(p => p.IsDeleted == 0)
-                .Skip((page.Page - 1) * page.Limit)
-                .Take(page.Limit)
+                .Skip((input.Page - 1) * input.Limit)
+                .Take(input.Limit)
                 .ToList();
             var ret = mapper.Map<List<PostBriefDto>>(list);
             await Task.CompletedTask;
-            return Ok(new QueryPostDto(cnt, ret));
+            return Ok(new QueryPostDto(cnt, ret, info));
         }
     }
 }

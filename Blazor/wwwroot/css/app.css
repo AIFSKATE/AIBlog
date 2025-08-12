@@ -11,7 +11,8 @@ html {
     -webkit-text-size-adjust: 100%;
 }
 
-body {
+body, html {
+    height: 100%;
     margin: 0;
 }
 
@@ -269,6 +270,11 @@ a {
     width: 100%;
 }
 
+.content {
+    flex: 1;
+    padding: 16px;
+}
+
 .navbar {
     height: 4rem;
     line-height: 4rem;
@@ -296,6 +302,8 @@ a {
 }
 
 .footer {
+    height: 60px;
+    line-height: 60px;
     width: 100%;
     text-align: center;
 }

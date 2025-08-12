@@ -8,23 +8,21 @@ namespace Mapper.DTO
 {
     public class QueryPostDto
     {
-        /// <summary>
-        /// 年份
-        /// </summary>
         public int Count { get; set; }
 
-        /// <summary>
-        /// Posts
-        /// </summary>
         public List<PostBriefDto> Posts { get; set; }
+
+        public string Info { get; set; } = string.Empty;
 
         public QueryPostDto(
             int Count,
-            List<PostBriefDto> Posts
+            List<PostBriefDto> Posts,
+            string Info= ""
             )
         {
             this.Count = Count;
             this.Posts = Posts;
+            this.Info = Info;
         }
     }
 }

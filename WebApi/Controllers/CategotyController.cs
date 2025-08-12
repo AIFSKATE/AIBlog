@@ -87,6 +87,9 @@ namespace WebApi.Controllers
             {
                 return NotFound("This category does not exist or no posts found under this category.");
             }
+
+            var info = posts.FirstOrDefault()?.CategoryName!;
+
             var allPosts = posts.Include(c => c.Posts).SelectMany(c => c.Posts).Where(p => p.IsDeleted == 0);
             var cnt = allPosts.Count();
 
@@ -96,7 +99,7 @@ namespace WebApi.Controllers
                 .ToList();
             var res = mapper.Map<List<PostBriefDto>>(ret);
             await Task.CompletedTask;
-            return Ok(new QueryPostDto(cnt, res));
+            return Ok(new QueryPostDto(cnt, res, info));
         }
     }
 }

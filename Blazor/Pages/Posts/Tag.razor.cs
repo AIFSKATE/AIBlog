@@ -1,23 +1,26 @@
-﻿using EFCore.Data;
-using Mapper.DTO;
+﻿using Mapper.DTO;
 using Microsoft.AspNetCore.Components;
 using System.Net.Http.Json;
 using static System.Net.WebRequestMethods;
 
 namespace Blazor.Pages.Posts
 {
-    public partial class Posts
+    public partial class Tag
     {
         /// <summary>
         /// 当前页码
         /// </summary>
         [Parameter]
         public int? page { get; set; }
+        [Parameter]
+        public int Id { get; set; }
 
+        public string TagName { get; set; }
         private int TotalPage;
         private int Limit = 15;
 
         private QueryPostDto PostData;
+
 
         protected override async Task OnInitializedAsync()
         {
@@ -30,9 +33,8 @@ namespace Blazor.Pages.Posts
         private async Task RenderPage(int? page)
         {
             this.page = page;
-            // 获取数据
-            PostData = await HttpClient.GetFromJsonAsync<QueryPostDto>($"Post/QueryPosts?page={page}&limit={Limit}");
-            // 计算总页码
+            PostData = await HttpClient.GetFromJsonAsync<QueryPostDto>($"Tag/QueryPostsUnderTag?tagId={Id}&Page={page}&Limit={Limit}");
+            TagName= PostData.Info;
             TotalPage = (int)Math.Ceiling((PostData.Count / (double)Limit));
             await InvokeAsync(StateHasChanged);
         }
@@ -50,6 +52,5 @@ namespace Blazor.Pages.Posts
                 await RenderPage(page);
             }
         }
-
     }
 }

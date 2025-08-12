@@ -16,7 +16,7 @@ else
                     @foreach (var item in PostTags)
                     {
                         @* <a href="/tag/@item.TagName/">@item.TagName<small>(@item.Count)</small></a> *@
-                        <a href="/tag/@item.TagName/">@item.TagName</a>
+                        <a href="/tag/@item.Id">@item.TagName</a>
                     }
                 }
                 else
