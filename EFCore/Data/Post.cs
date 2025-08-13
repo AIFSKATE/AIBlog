@@ -31,6 +31,7 @@ namespace EFCore.Data
             builder.HasKey(t => t.Id);
             builder.Property(t => t.Title).HasMaxLength(50).IsRequired();
             builder.Property(t => t.CreationTime).IsRequired();
+            builder.Property(t => t.Html).IsRequired();
             builder.HasOne<Category>(c => c.Category).WithMany(p => p.Posts).HasForeignKey(p => p.CategoryId);
         }
     }

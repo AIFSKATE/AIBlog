@@ -80,6 +80,10 @@ namespace WebApi.Controllers
                 return BadRequest("This post does not exist");
             }
             var ret = mapper.Map<PostDTO>(post);
+            if (ret.CategoryId != null)
+            {
+                ret.CategoryName = dbContext.categories.Single(c => c.Id == ret.CategoryId).CategoryName;
+            }
             return Ok(ret);
         }
 

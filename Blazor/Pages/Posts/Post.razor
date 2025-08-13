@@ -1,18 +1,83 @@
-﻿//Post.razor
-@page "/post/{year:int}/{month:int}/{day:int}/{name}"
+﻿@page "/post/{Id:int}"
 
-<Loading />
 
-@code {
-    [Parameter]
-    public int year { get; set; }
 
-    [Parameter]
-    public int month { get; set; }
-
-    [Parameter]
-    public int day { get; set; }
-
-    [Parameter]
-    public string name { get; set; }
+@if (PostDto == null && !Error)
+{
+    <Loading />
 }
+else if (!Error)
+{
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">@PostDto.Title</h1>
+            <div class="post-meta">
+                Author: <a itemprop="author" rel="author" href="javascript:;">AIFSKATE</a>
+                <span class="post-time">
+                    Date: <a href="javascript:;">@PostDto.CreationTime</a>
+                </span>
+                <span class="post-category">
+                    Category:<a href="/category/@PostDto.CategoryId/">@(PostDto.CategoryName??"无")</a>
+                </span>
+            </div>
+        </header>
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    @if (PostDto.Tags.Any())
+                    {
+                        @foreach (var tag in PostDto.Tags)
+                        {
+                            <a href="/tag/@tag.Id/">#@tag.TagName&ensp;</a>
+                        }
+                    }
+                </span>
+            </div>
+            @* <div>
+                <a @onclick="async () => await Utils.BaskAsync()">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div> *@
+        </section>
+        <div class="post-content" id="content">
+            @((MarkupString)PostDto.Html)
+        </div>
+        <section class="post-copyright">
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>AIFSKATE</span>
+            </p>
+            @* <p class="copyright-item">
+                <span>Permalink:</span>
+                <span><a href="/post@PostDto.Url">https://1111</a></span>
+            </p> *@
+            <p class="copyright-item">
+                <span>License:</span>
+                <span>本文采用<a target="_blank" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"> 知识共享 署名-非商业性使用-禁止演绎(CC BY-NC-ND)国际许可协议 </a>进行许可</span>
+            </p>
+        </section>
+        @* <section class="post-nav">
+            @if (PostDto != null)
+            {
+                <a class="prev"
+                   rel="prev"
+                   href="/post/"></a>
+
+            }
+            @if (PostDto != null)
+            {
+                <a class="next"
+                   rel="prev"
+                   href="/post/"></a>
+            }
+
+        </section> *@
+    </article>
+
+}
+else
+{
+    <ErrorTip />
+}
+

@@ -17,7 +17,8 @@ namespace Mapper.Profiles
             CreateMap<FriendLink, FriendLinkDTO>().ReverseMap();
             CreateMap<FriendLinkCreation, FriendLink>();
 
-            CreateMap<Post, PostDTO>();
+            CreateMap<Post, PostDTO>()
+                .ForMember(p => p.CategoryName, opt => opt.Ignore());
             CreateMap<PostDTO, Post>()
                 .ForMember(p => p.CreationTime, opt => opt.Ignore())
                 .ForMember(p => p.Tags, opt => opt.Ignore());

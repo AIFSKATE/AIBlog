@@ -14,7 +14,7 @@ else
             @foreach (var item in PostData.Posts)
             {
                 <article class="archive-item">
-                    <NavLink href="@("/post" + item.Url)">@item.Title</NavLink>
+                    <a href="/post/@item.Id">@item.Title</a>
                     <span class="archive-item-date">@item.CreationTime</span>
                 </article>
             }

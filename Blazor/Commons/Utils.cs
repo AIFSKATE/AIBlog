@@ -71,5 +71,15 @@ namespace Blazor.Commons
 
             await Task.CompletedTask;
         }
+
+
+        /// <summary>
+        /// 后退
+        /// </summary>
+        /// <returns></returns>
+        public async Task BaskAsync()
+        {
+            await InvokeAsync("window.history.back");
+        }
     }
 }
