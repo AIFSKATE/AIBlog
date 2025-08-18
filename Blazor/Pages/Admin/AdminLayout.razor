@@ -1,0 +1,52 @@
+﻿@if (!isLogin)
+{
+    <Loading />
+}
+else
+{
+    @ChildContent
+}
+
+@code {
+    /// <summary>
+    /// 展示内容
+    /// </summary>
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    /// <summary>
+    /// 是否登录
+    /// </summary>
+    private bool isLogin { get; set; }
+
+    /// <summary>
+    /// 初始化
+    /// </summary>
+    /// <returns></returns>
+    protected override async Task OnInitializedAsync()
+    {
+        var token = await Utils.GetTokenAsync();
+
+        if (string.IsNullOrEmpty(token))
+        {
+            isLogin = false;
+
+            await Utils.NavigateTo("/");
+        }
+        else
+        {
+            HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, "Account/CurrentUser");
+            httpRequestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            var response = await HttpClient.SendAsync(httpRequestMessage);
+
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                await Utils.NavigateTo("/");
+            }
+            else
+            {
+                isLogin = true;
+            }
+        }
+    }
+}

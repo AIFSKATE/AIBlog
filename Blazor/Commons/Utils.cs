@@ -65,7 +65,7 @@ namespace Blazor.Commons
         /// <param name="uri"></param>
         /// <param name="forceLoad">true，绕过路由刷新页面</param>
         /// <returns></returns>
-        public async Task RenderPage(string url, bool forceLoad = true)
+        public async Task NavigateTo(string url, bool forceLoad = true)
         {
             _navigationManager.NavigateTo(url, forceLoad);
 

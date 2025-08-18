@@ -22,7 +22,7 @@ namespace Blazor.Pages.Admin
             var response = await HttpClient.GetAsync("Account/CurrentUser");
             if (response.IsSuccessStatusCode)
             {
-                NavigationManager.NavigateTo("admin");
+                await Utils.NavigateTo("admin");
                 return;
             }
             await ShowInfoAsync("Token已过期");
@@ -58,7 +58,7 @@ namespace Blazor.Pages.Admin
             HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
             Console.WriteLine("登陆成功");
             await Utils.SetTokenAsync(token);
-            NavigationManager.NavigateTo("admin");
+            await Utils.NavigateTo("admin");
         }
 
         private async Task ShowInfoAsync(string str)
