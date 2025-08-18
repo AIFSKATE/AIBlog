@@ -125,7 +125,7 @@ namespace WebApi.Controllers
             }
             if (await userManager.IsLockedOutAsync(user))
             {
-                return BadRequest($"{userName} is locked");
+                return Forbid($"{userName} is locked");
             }
             var success = await userManager.CheckPasswordAsync(user, password);
             if (success)

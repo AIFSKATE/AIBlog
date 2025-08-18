@@ -1,0 +1,86 @@
+﻿/* 登录表单外层：竖直排列所有内容 */
+.login-form {
+    gap: 15px;
+    width: 300px;
+    margin: 150px auto; /* 上下留白，左右居中 */
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: transparent;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+    .login-form ::deep form {
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* 让表单内的子项（按钮等）水平居中 */
+        width: 100%;
+        gap: 15px; /* 每个 div 和按钮之间的间距 */
+    }
+    /* 每个输入块 */
+    .login-form div {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    /* 标签 */
+    .login-form label {
+        font-weight: 600;
+    }
+
+    /* 输入框 */
+    .login-form input {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        width: 100%;
+    }
+
+    /* 登录按钮（Bootstrap 风格） */
+    .login-form button {
+        align-self: center; /* 居中 */
+        width: 50%;
+        padding: 10px;
+        margin-top: 20px; /* 与上一个元素拉开距离 */
+        background-color: #0d6efd;
+        border: none;
+        border-radius: 8px;
+        color: #fff;
+        font-weight: 600;
+        text-align: center;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+        .login-form button:hover {
+            background-color: #0b5ed7;
+        }
+
+/* 单字段错误提示 */
+::deep .validation-message {
+    color: #dc3545;
+    margin-left: 0.5em; /* 减小点和文字的间距 */
+    font-size: 0.85rem;
+}
+
+::deep ul {
+    padding-left: 0; /* 列表左侧缩进 */
+}
+
+.alert-box {
+    position: fixed; /* 固定在屏幕上，不随滚动条变化 */
+    top: 15%; 
+    left: 50%; /* 先靠到中间 */
+    transform: translateX(-50%); /* 再水平居中 */
+    background-color: #f8d7da; /* 浅红色背景 */
+    color: #842029; /* 深红色文字 */
+    border: 1px solid #f5c2c7;
+    border-radius: 4px;
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    text-align: center;
+    z-index: 9999; /* 保证在最上层 */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}

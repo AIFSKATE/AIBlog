@@ -1,0 +1,26 @@
+﻿@page "/auth"
+
+@if (ShowMessage)
+{
+    <div class="alert-box">
+        @Message
+    </div>
+}
+
+<div class="login-form">
+    <EditForm Model="@loginModel" OnValidSubmit="HandleLoginAsync">
+        <DataAnnotationsValidator />
+        <div>
+            <label for="username">Username:</label>
+            <InputText id="username" @bind-Value="loginModel.Name" />
+        </div>
+
+        <div>
+            <label for="password">Password:</label>
+            <InputText id="password" @bind-Value="loginModel.Password" type="password" />
+        </div>
+
+        <button type="submit">Login</button>
+        <ValidationSummary />
+    </EditForm>
+</div>

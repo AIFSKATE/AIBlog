@@ -81,5 +81,25 @@ namespace Blazor.Commons
         {
             await InvokeAsync("window.history.back");
         }
+
+        /// <summary>
+        /// 清楚Storage
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        internal async Task ClearStorageAsync()
+        {
+            await InvokeAsync("window.func.clearAllStorage");
+        }
+
+        internal async Task SetTokenAsync(string token)
+        {
+            await SetStorageAsync("aiblog_token", token);
+        }
+
+        internal async Task<string> GetTokenAsync()
+        {
+            return await GetStorageAsync("aiblog_token");
+        }
     }
 }

@@ -16,5 +16,9 @@ func = {
         } else {
             document.querySelector('body').classList.remove('dark-theme');
         }
+    },
+    clearAllStorage: function () {
+        localStorage.clear();
+        sessionStorage.clear();
     }
 };
