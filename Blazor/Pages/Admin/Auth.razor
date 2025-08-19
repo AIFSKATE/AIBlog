@@ -1,11 +1,6 @@
 ﻿@page "/auth"
 
-@if (ShowMessage)
-{
-    <div class="alert-box">
-        @Message
-    </div>
-}
+<Hint Show=@ShowMessage>@Message</Hint>
 
 <div class="login-form">
     <EditForm Model="@loginModel" OnValidSubmit="HandleLoginAsync">

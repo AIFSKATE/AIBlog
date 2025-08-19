@@ -28,8 +28,9 @@ namespace Mapper.Profiles
             CreateMap<Tag, TagDTO>().ReverseMap();
 
 
-            CreateMap<CategoryCreation, Category>();
-            CreateMap<Category, CategoryDTO>().ReverseMap();
+            CreateMap<Category, CategoryDTO>()
+                .ForMember(p => p.ArticleCount, opt => opt.MapFrom(src => src.Posts.Count));
+            CreateMap<CategoryDTO, Category>();
         }
     }
 }

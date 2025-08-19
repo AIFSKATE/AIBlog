@@ -12,7 +12,7 @@ namespace Blazor.Pages.Categories
         protected override async Task OnInitializedAsync()
         {
             // 获取数据
-            categories = await HttpClient.GetFromJsonAsync<List<CategoryDTO>>("Categoty/QueryCategories");
+            categories = await HttpClient.GetFromJsonAsync<List<CategoryDTO>>("Category/QueryCategories");
             await InvokeAsync(StateHasChanged);
         }
     }

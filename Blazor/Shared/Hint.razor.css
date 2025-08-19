@@ -1,0 +1,15 @@
+﻿.alert-box {
+    position: fixed; /* 固定在屏幕上，不随滚动条变化 */
+    top: 15%;
+    left: 50%; /* 先靠到中间 */
+    transform: translateX(-50%); /* 再水平居中 */
+    background-color: #f8d7da; /* 浅红色背景 */
+    color: #842029; /* 深红色文字 */
+    border: 1px solid #f5c2c7;
+    border-radius: 4px;
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    text-align: center;
+    z-index: 9999; /* 保证在最上层 */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}

@@ -10,6 +10,7 @@ namespace Blazor.Pages.Admin
         private LoginInfo loginModel = new();
         private bool ShowMessage;
         private string Message = "Login failed, please try again.";
+        private CancellationTokenSource? Cts;
 
         protected override async Task OnInitializedAsync()
         {
@@ -63,15 +64,14 @@ namespace Blazor.Pages.Admin
 
         private async Task ShowInfoAsync(string str)
         {
+            Cts?.Cancel();
+            Cts = new CancellationTokenSource();
             Message = str;
-            // 假设登录失败
             ShowMessage = true;
             await InvokeAsync(StateHasChanged);
-
-            // 3 秒后自动隐藏
-            await Task.Delay(3000);
+            await Task.Delay(3000, Cts.Token);
             ShowMessage = false;
-            await InvokeAsync(StateHasChanged);
         }
+
     }
 }

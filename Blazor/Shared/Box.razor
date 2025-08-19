@@ -1,0 +1,14 @@
+﻿@if (Open)
+{
+    <div class="shadow"></div>
+    <div class="box">
+        <div class="close" @onclick="OnCancel">❌</div>
+        <div class="box-content">
+            @ChildContent
+            <div class="box-item box-item-btn">
+                <button class="box-btn" @onclick="OnConfirm">@ConfirmText</button>
+                <button class="box-btn btn-primary" @onclick="OnCancel">@CancelText</button>
+            </div>
+        </div>
+    </div>
+}

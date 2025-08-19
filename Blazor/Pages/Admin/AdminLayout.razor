@@ -46,6 +46,7 @@ else
             else
             {
                 isLogin = true;
+                HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
             }
         }
     }

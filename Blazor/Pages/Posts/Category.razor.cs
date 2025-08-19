@@ -36,7 +36,7 @@ namespace Blazor.Pages.Posts
         {
             this.page = page;
             // 获取数据
-            PostData = await HttpClient.GetFromJsonAsync<QueryPostDto>($"Categoty/QueryPostsUnderCategory?Page={page}&Limit={Limit}&categoryId={Id}");
+            PostData = await HttpClient.GetFromJsonAsync<QueryPostDto>($"Category/QueryPostsUnderCategory?Page={page}&Limit={Limit}&categoryId={Id}");
             categoryName = PostData.Info ?? string.Empty;
 
             // 计算总页码

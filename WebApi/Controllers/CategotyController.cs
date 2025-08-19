@@ -13,15 +13,15 @@ namespace WebApi.Controllers
     [ApiController]
     [Route("[controller]/[Action]")]
     [Authorize(Roles = AIBlogRole.Admin)]
-    public class CategotyController : ControllerBase
+    public class CategoryController : ControllerBase
     {
         readonly IMapper mapper;
-        readonly ILogger<CategotyController> logger;
+        readonly ILogger<CategoryController> logger;
         readonly AIBlogDbContext dbContext;
 
-        public CategotyController(IMapper mapper,
+        public CategoryController(IMapper mapper,
             AIBlogDbContext dbContext,
-            ILogger<CategotyController> logger)
+            ILogger<CategoryController> logger)
         {
             this.mapper = mapper;
             this.dbContext = dbContext;
@@ -29,10 +29,28 @@ namespace WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddCategory(CategoryCreation categoryCreation)
+        public async Task<IActionResult> AddCategory(CategoryDTO categoryDTO)
         {
-            var category = mapper.Map<Category>(categoryCreation);
-            dbContext.categories.Add(category);
+            var category = mapper.Map<Category>(categoryDTO);
+            category.Id = 0;
+            var existingCategory = dbContext.categories
+                .SingleOrDefault(c => c.CategoryName == category.CategoryName);
+
+            if (existingCategory != null)
+            {
+                if (existingCategory.IsDeleted == 0)
+                {
+                    return BadRequest("This category already exists and is not deleted");
+                }
+                else
+                {
+                    existingCategory.IsDeleted = 0; // Restore the deleted category
+                }
+            }
+            else
+            {
+                dbContext.categories.Add(category);
+            }
             await dbContext.SaveChangesAsync();
             logger.LogTrace($"Category added: {category.CategoryName}");
             return Ok();
@@ -42,7 +60,7 @@ namespace WebApi.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> QueryCategories()
         {
-            var list = dbContext.categories.AsNoTracking()
+            var list = dbContext.categories.Include(c => c.Posts).AsNoTracking()
                 .Where(f => f.IsDeleted == 0).ToList();
             var ret = mapper.Map<List<CategoryDTO>>(list);
             await Task.CompletedTask;
@@ -70,6 +88,10 @@ namespace WebApi.Controllers
             if (category == null)
             {
                 return BadRequest("This category does not exist");
+            }
+            else if (dbContext.categories.Any(c => c.CategoryName == categoryDTO.CategoryName))
+            {
+                return BadRequest("This category name already exists");
             }
             mapper.Map(categoryDTO, category);
             await dbContext.SaveChangesAsync();
