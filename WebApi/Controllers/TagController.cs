@@ -30,7 +30,7 @@ namespace WebApi.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> AddTag(string tagName)
+        public async Task<IActionResult> AddTag([FromBody]string tagName)
         {
             if (dbContext.tags.Any(t => t.TagName == tagName))
             {
@@ -100,7 +100,7 @@ namespace WebApi.Controllers
                 .ToList();
             var ret = mapper.Map<List<PostBriefDto>>(list);
             await Task.CompletedTask;
-            return Ok(new QueryPostDto(cnt, ret, info));
+            return Ok(new QueryPostsDto(cnt, ret, info));
         }
     }
 }

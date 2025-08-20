@@ -1,0 +1,49 @@
+﻿@page "/admin/friendlinks"
+
+<AdminLayout>
+    @if (FriendLinks == null)
+    {
+        <Loading />
+    }
+    else
+    {
+        <div class="post-wrap categories">
+            <h2 class="post-title">-&nbsp;FriendLinks&nbsp;-</h2>
+            @if (FriendLinks.Any())
+            {
+                <div class="categories-card">
+                    @foreach (var item in FriendLinks)
+                    {
+                        <div class="card-item">
+                            <div class="categories">
+                                <NavLink title="❌删除" @onclick="@(async () => await DeleteFriendlinkAsync(item.Id))">❌</NavLink>
+                                <NavLink title="📝编辑" @onclick="@(() => UpdateFriendlink(item))">📝</NavLink>
+                                <NavLink target="_blank" href="@(item.LinkUrl)" title="@(item.LinkUrl)">
+                                    <h3>@item.Title</h3>
+                                </NavLink>
+                            </div>
+                        </div>
+                    }
+                    <div class="card-item">
+                        <div class="categories">
+                            <NavLink><h3 @onclick=@AddFriendlink>📒~~~ 新增分类 ~~~📒</h3></NavLink>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <ErrorTip />
+            }
+        </div>
+
+        <Box Open="@Open" OnCancel="OnCancel" OnConfirm="OnConfirm">
+            <div class="box-item">
+                FriendlinkTitle:<input type="text" @bind="@UploadData.Title" @bind:event="oninput" />
+            </div>
+            <div class="box-item">
+                FriendlinkUrl:<input type="text" @bind="@UploadData.LinkUrl" @bind:event="oninput" />
+            </div>
+        </Box>
+    }
+</AdminLayout>

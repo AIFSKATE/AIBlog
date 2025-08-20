@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Mapper.DTO
 {
-    public class QueryPostDto
+    public class QueryPostsDto
     {
         public int Count { get; set; }
 
@@ -14,7 +14,7 @@ namespace Mapper.DTO
 
         public string Info { get; set; } = string.Empty;
 
-        public QueryPostDto(
+        public QueryPostsDto(
             int Count,
             List<PostBriefDto> Posts,
             string Info= ""

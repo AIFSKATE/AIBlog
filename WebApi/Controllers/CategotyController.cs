@@ -121,7 +121,7 @@ namespace WebApi.Controllers
                 .ToList();
             var res = mapper.Map<List<PostBriefDto>>(ret);
             await Task.CompletedTask;
-            return Ok(new QueryPostDto(cnt, res, info));
+            return Ok(new QueryPostsDto(cnt, res, info));
         }
     }
 }

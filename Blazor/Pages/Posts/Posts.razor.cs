@@ -17,7 +17,7 @@ namespace Blazor.Pages.Posts
         private int TotalPage;
         private int Limit = 15;
 
-        private QueryPostDto PostData;
+        private QueryPostsDto PostData;
 
         protected override async Task OnInitializedAsync()
         {
@@ -31,7 +31,7 @@ namespace Blazor.Pages.Posts
         {
             this.page = page;
             // 获取数据
-            PostData = await HttpClient.GetFromJsonAsync<QueryPostDto>($"Post/QueryPosts?page={page}&limit={Limit}");
+            PostData = await HttpClient.GetFromJsonAsync<QueryPostsDto>($"Post/QueryPosts?page={page}&limit={Limit}");
             // 计算总页码
             TotalPage = (int)Math.Ceiling((PostData.Count / (double)Limit));
             await InvokeAsync(StateHasChanged);

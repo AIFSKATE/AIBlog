@@ -19,7 +19,7 @@ namespace Blazor.Pages.Posts
         private int TotalPage;
         private int Limit = 15;
 
-        private QueryPostDto PostData;
+        private QueryPostsDto PostData;
 
 
         protected override async Task OnInitializedAsync()
@@ -33,7 +33,7 @@ namespace Blazor.Pages.Posts
         private async Task RenderPage(int? page)
         {
             this.page = page;
-            PostData = await HttpClient.GetFromJsonAsync<QueryPostDto>($"Tag/QueryPostsUnderTag?tagId={Id}&Page={page}&Limit={Limit}");
+            PostData = await HttpClient.GetFromJsonAsync<QueryPostsDto>($"Tag/QueryPostsUnderTag?tagId={Id}&Page={page}&Limit={Limit}");
             TagName= PostData.Info;
             TotalPage = (int)Math.Ceiling((PostData.Count / (double)Limit));
             await InvokeAsync(StateHasChanged);

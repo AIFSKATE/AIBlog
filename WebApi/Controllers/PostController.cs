@@ -65,7 +65,7 @@ namespace WebApi.Controllers
                 .Take(input.Limit);
             var res = list.Select(p => mapper.Map<PostBriefDto>(p)).ToList();
             await Task.CompletedTask;
-            return Ok(new QueryPostDto(cnt, res));
+            return Ok(new QueryPostsDto(cnt, res));
 
         }
 

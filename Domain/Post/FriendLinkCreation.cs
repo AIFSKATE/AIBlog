@@ -11,5 +11,17 @@ namespace Domain.Post
         public string Title { get; set; }
 
         public string LinkUrl { get; set; }
+
+        public FriendLinkCreation(string title, string linkUrl)
+        {
+            Title = title;
+            LinkUrl = linkUrl;
+        }
+
+        public FriendLinkCreation()
+        {
+            Title = string.Empty;
+            LinkUrl = string.Empty;
+        }
     }
 }
