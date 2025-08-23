@@ -1,4 +1,5 @@
 ﻿using Mapper.DTO;
+using Markdig;
 using Microsoft.AspNetCore.Components;
 using System.Net.Http.Json;
 
@@ -33,16 +34,17 @@ namespace Blazor.Pages.Admin
         List<(bool, string)> TempoTags = new();
         List<(bool, string)> TempoCategories = new();
 
-        PostDTO Post = new PostDTO();
+        PostDTO PostDTO = new PostDTO();
 
         protected override async Task OnInitializedAsync()
         {
             if (Id.HasValue)
             {
-                Post = await HttpClient.GetFromJsonAsync<PostDTO>($"Post/GetPost?postId={Id.Value}");
+                PostDTO = await HttpClient.GetFromJsonAsync<PostDTO>($"Post/GetPost?postId={Id.Value}");
+                InputText = PostDTO.Markdown??string.Empty;
             }
-            PostCategory = Post.CategoryId ?? 0;
-            PostTags=Post.Tags ?? new List<TagDTO>();
+            PostCategory = PostDTO.CategoryId ?? 0;
+            PostTags = PostDTO.Tags ?? new List<TagDTO>();
 
             AllTags = await HttpClient.GetFromJsonAsync<List<TagDTO>>("Tag/QueryAllTags");
             AllCategories = await HttpClient.GetFromJsonAsync<List<CategoryDTO>>("Category/QueryCategories");
@@ -56,6 +58,25 @@ namespace Blazor.Pages.Admin
         private void OnSubmit()
         {
             Console.WriteLine("成功提交");
+            PostDTO.Title = PostDTO.Title?.Trim();
+            PostDTO.Markdown = InputText;
+            for (int i = 0; i < TempoCategories.Count; i++)
+            {
+                if (TempoCategories[i].Item1)
+                {
+                    PostDTO.CategoryId = AllCategories[i].Id;
+                    break;
+                }
+                else
+                {
+                    PostDTO.CategoryId = null;
+                }
+            }
+            PostDTO.Tags = AllTags.Where((t, i) => TempoTags[i].Item1).ToList();
+            if (Id.HasValue)
+            {
+                HttpClient.PutAsJsonAsync<PostDTO>("Post/UpdatePost", PostDTO);
+            }
         }
 
     }
