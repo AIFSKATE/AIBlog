@@ -58,17 +58,26 @@
     padding: 0 20px; /* 与下方 grid 对齐，可按需调整 */
 }
 
-/* 文字行（Tags / Categories） */
+/* 每一行：左label + 右chips区 */
 .toolbar-item {
-    font-size: 16px;
-    color: #334155;
+    display: flex;
+    align-items: flex-start; /* 让多行 pills 顶齐 label 顶部 */
+    gap: 12px;
 }
+
+    /* 左侧文字列宽度固定，靠左对齐 */
+    .toolbar-item .label {
+        flex: 0 0 100px; /* 调整为你想要的列宽 */
+        font-weight: 600;
+        text-align: center;
+        color: #334155;
+    }
 
 /* 白色椭圆“药丸”按钮，参考 Bootstrap 风格 */
 .btn-pill {
     background: #fff;
     color: #0d6efd;
-    border: 1px solid #ced4da;
+    border: 3px solid #ced4da;
     border-radius: 9999px; /* 药丸形状 */
     padding: 6px 16px;
     font-weight: 600;

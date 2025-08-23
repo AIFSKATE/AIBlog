@@ -4,8 +4,14 @@
 <AdminLayout>
 
     <div class="toolbar">
-        <div class="toolbar-item">Tags</div>
-        <div class="toolbar-item">Categories</div>
+        <div class="toolbar-item">
+            <div class="label">Tags:</div>
+            <Chips Items=TempoTags IsCheckBox=true></Chips>
+        </div>
+        <div class="toolbar-item">
+            <div class="label">Categories:</div>
+            <Chips Items=TempoCategories IsCheckBox=false></Chips>
+        </div>
         <button class="btn-pill" @onclick=OnSubmit>Submit</button>
     </div>
 

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using Mapper.DTO;
+using Microsoft.AspNetCore.Components;
+using System.Net.Http.Json;
 
 namespace Blazor.Pages.Admin
 {
@@ -8,19 +10,48 @@ namespace Blazor.Pages.Admin
         public int? Id { get; set; }
 
         private string OriginalHtmlText = string.Empty;
-        private string InputText {
+        private string InputText
+        {
             get
             {
                 return OriginalHtmlText;
             }
             set
             {
-                OriginalHtmlText=value;
-                HtmlText=Markdig.Markdown.ToHtml(value);
+                OriginalHtmlText = value;
+                HtmlText = Markdig.Markdown.ToHtml(value);
             }
         }
-
         private string HtmlText = string.Empty;
+
+        List<TagDTO> AllTags = new List<TagDTO>();
+        List<CategoryDTO> AllCategories = new();
+
+        List<TagDTO> PostTags;
+        int PostCategory = 0;
+
+        List<(bool, string)> TempoTags = new();
+        List<(bool, string)> TempoCategories = new();
+
+        PostDTO Post = new PostDTO();
+
+        protected override async Task OnInitializedAsync()
+        {
+            if (Id.HasValue)
+            {
+                Post = await HttpClient.GetFromJsonAsync<PostDTO>($"Post/GetPost?postId={Id.Value}");
+            }
+            PostCategory = Post.CategoryId ?? 0;
+            PostTags=Post.Tags ?? new List<TagDTO>();
+
+            AllTags = await HttpClient.GetFromJsonAsync<List<TagDTO>>("Tag/QueryAllTags");
+            AllCategories = await HttpClient.GetFromJsonAsync<List<CategoryDTO>>("Category/QueryCategories");
+
+            TempoTags = AllTags.Select(t => (PostTags.Any(x => x.Id == t.Id), t.TagName)).ToList();
+            TempoCategories = AllCategories.Select(t => (PostCategory == t.Id, t.CategoryName)).ToList();
+
+
+        }
 
         private void OnSubmit()
         {
