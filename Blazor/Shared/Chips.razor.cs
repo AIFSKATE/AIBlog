@@ -3,29 +3,65 @@ using System.Threading.Tasks;
 
 namespace Blazor.Shared
 {
+    public enum ChipType
+    {
+        Checkbox,
+        Radio,
+        Show
+    }
+
     public partial class Chips
     {
         [Parameter]
-        public List<(bool selected, string name)> Items { get; set; } = new();
+        public List<string> Items { get; set; } = new();
 
         [Parameter]
-        public bool IsCheckBox { get; set; } = true;
+        public List<int> Selected { get; set; } = new();
+
+        [Parameter]
+        public ChipType Type { get; set; } = ChipType.Checkbox;
+
+        public Func<int, Task>? OnClick { get; set; }
+
+        protected override async Task OnInitializedAsync()
+        {
+            await base.OnInitializedAsync();
+            switch (Type)
+            {
+                case ChipType.Checkbox:
+                    OnClick = ToggleCheckBox;
+                    break;
+                case ChipType.Radio:
+                    OnClick = ToggleRadioBox;
+                    break;
+                case ChipType.Show:
+                    OnClick = null;
+                    break;
+                default:
+                    break;
+            }
+        }
 
         private async Task ToggleCheckBox(int index)
         {
-            var item = Items[index];
-            Items[index] = (!item.selected, item.name);
+            Selected[index] = Selected[index] ^ 1;
             await InvokeAsync(StateHasChanged);
         }
 
         private async Task ToggleRadioBox(int index)
         {
-            for (int i = 0; i < Items.Count; i++)
+            if (Selected[index] == 0)
             {
-                Items[i] = (false, Items[i].name);
+                for (int i = 0; i < Selected.Count; i++)
+                {
+                    Selected[i] = 0;
+                }
+                Selected[index] = 1;
             }
-            var item = Items[index];
-            Items[index] = (true, item.name);
+            else
+            {
+                Selected[index] = 0;
+            }
             await InvokeAsync(StateHasChanged);
         }
     }

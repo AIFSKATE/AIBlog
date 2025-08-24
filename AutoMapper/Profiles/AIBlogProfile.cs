@@ -24,6 +24,8 @@ namespace Mapper.Profiles
                 .ForMember(p => p.Tags, opt => opt.Ignore());
             CreateMap<Post, PostBriefDto>();
             CreateMap<PostCreation, Post>();
+            CreateMap<PostDTO, PostCreation>()
+                .ForMember(p => p.TagIDs, opt => opt.MapFrom(src => src.Tags != null ? src.Tags.Select(t => t.Id).ToList() : new List<int>()));
 
             CreateMap<Tag, TagDTO>().ReverseMap();
 

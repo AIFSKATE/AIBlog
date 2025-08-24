@@ -1,31 +1,14 @@
 ﻿<div class="chips">
-    @if (IsCheckBox)
+    @for (int i = 0; i < Items.Count; i++)
     {
-        @for (int i = 0; i < Items.Count; i++)
-        {
-            int j = i;// Prevent modified closure issue
+        int j = i;// Prevent modified closure issue
 
-            <button type="button"
-                    class="pill @(Items[i].selected ? "selected" : null)"
-                    role="checkbox"
-                    aria-checked="@Items[i].selected"
-                    @onclick="() => ToggleCheckBox(j)">
-                @Items[i].name
-            </button>
-        }
-    }
-    else
-    {
-        @for (int i = 0; i < Items.Count; i++)
-        {
-            int j = i;// Prevent modified closure issue
-            <button type="button"
-                    class="pill @(Items[i].selected ? "selected" : null)"
-                    role="checkbox"
-                    aria-checked="@Items[i].selected"
-                    @onclick="() => ToggleRadioBox(j)">
-                @Items[i].name
-            </button>
-        }
+        <button type="button"
+                class="pill @(Selected[i] != 0 ? "selected" : null)"
+                role="checkbox"
+                aria-checked="@(Selected[i] != 0)"
+                @onclick="async () => await OnClick?.Invoke(j)">
+            @Items[i]
+        </button>
     }
 </div>
