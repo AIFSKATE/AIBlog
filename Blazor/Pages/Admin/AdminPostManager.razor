@@ -12,6 +12,10 @@
             <div class="label">Categories:</div>
             <Chips Items=CtgryNames Selected=CtgriesSelected Type=ChipType.Radio></Chips>
         </div>
+        <div class="toolbar-item">
+            <div class="label">Title:</div>
+            <InputText class="title-input" @bind-Value=PostTitle placeholder="请输入标题..." />
+        </div>
         <button class="btn-pill" @onclick=OnSubmit>Submit</button>
     </div>
 

@@ -17,7 +17,7 @@ else if (!Error)
                     Date: <a href="javascript:;">@PostDto.CreationTime</a>
                 </span>
                 <span class="post-category">
-                    Category:<a href="/category/@PostDto.CategoryId/">@(PostDto.CategoryName??"无")</a>
+                    Category:<a href="/category/@PostDto.CategoryId/">@(PostDto.CategoryName ?? "无")</a>
                 </span>
             </div>
         </header>
@@ -29,7 +29,7 @@ else if (!Error)
                     {
                         @foreach (var tag in PostDto.Tags)
                         {
-                            <a href="/tag/@tag.Id/">#@tag.TagName&ensp;</a>
+                            <a href="/tag/@tag.Id/">@tag.TagName&ensp;</a>
                         }
                     }
                 </span>
@@ -41,7 +41,7 @@ else if (!Error)
             </div> *@
         </section>
         <div class="post-content" id="content">
-            @((MarkupString)PostDto.Markdown)
+            @((MarkupString)Markdig.Markdown.ToHtml(PostDto.Markdown))
         </div>
         <section class="post-copyright">
             <p class="copyright-item">

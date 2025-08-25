@@ -91,3 +91,11 @@
         border-color: #bfc8d2;
         box-shadow: 0 2px 6px rgba(0,0,0,.08);
     }
+
+::deep .title-input {
+    min-width: 20vw;
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+}

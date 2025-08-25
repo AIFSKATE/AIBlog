@@ -40,6 +40,7 @@ namespace Blazor.Pages.Admin
         List<int> CtgriesSelected = new();
 
         PostDTO PostDTO = new();
+        private string PostTitle { get; set; } = string.Empty;
 
         protected override async Task OnInitializedAsync()
         {
@@ -50,6 +51,7 @@ namespace Blazor.Pages.Admin
             }
             PostCategory = PostDTO.CategoryId ?? -1;
             PostTags = PostDTO.Tags ?? new List<TagDTO>();
+            PostTitle = PostDTO.Title ?? string.Empty;
 
             AllTags = await HttpClient.GetFromJsonAsync<List<TagDTO>>("Tag/QueryAllTags");
             AllCategories = await HttpClient.GetFromJsonAsync<List<CategoryDTO>>("Category/QueryCategories");
@@ -70,7 +72,7 @@ namespace Blazor.Pages.Admin
         private void OnSubmit()
         {
             Console.WriteLine("成功提交");
-            PostDTO.Title = PostDTO.Title?.Trim();
+            PostDTO.Title = PostTitle == string.Empty ? DateTime.Now.ToShortDateString() : PostTitle;
             PostDTO.Markdown = InputText;
             int index = CtgriesSelected.IndexOf(1);
             if (index < 0)
