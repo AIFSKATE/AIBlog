@@ -1,5 +1,3 @@
-
-using EFCore;
 using System.Text.Json.Serialization;
 
 namespace WebApi

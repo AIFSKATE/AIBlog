@@ -12,11 +12,7 @@ namespace Blazor
             builder.RootComponents.Add<App>("#app");
             builder.RootComponents.Add<HeadOutlet>("head::after");
 
-            var baseAddress = "https://localhost:7218/";
-            if (builder.HostEnvironment.IsProduction())
-            {
-                baseAddress = "https://localhost:7218/";
-            }
+            var baseAddress = builder.Configuration.GetValue<string>("BaseAddress") ?? "https://aifskate.com/api/";
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(baseAddress) });
             builder.Services.AddSingleton<Utils>();
