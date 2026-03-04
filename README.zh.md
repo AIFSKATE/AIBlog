@@ -2,6 +2,8 @@
 
 [English](README.md)|中文
 
+[Come say hi!](https://aifskate.com/)
+
 🌱🌱🌱
 
 我的博客(尚在开发中). 
