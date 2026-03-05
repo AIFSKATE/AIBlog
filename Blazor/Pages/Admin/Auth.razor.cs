@@ -1,6 +1,4 @@
 ﻿using Domain.Account;
-using Microsoft.AspNetCore.Components;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Net.Http.Json;
 
 namespace Blazor.Pages.Admin
@@ -31,7 +29,7 @@ namespace Blazor.Pages.Admin
 
         private async Task HandleLoginAsync()
         {
-            var response = await HttpClient.PostAsJsonAsync("/Account/Login", loginModel);
+            var response = await HttpClient.PostAsJsonAsync("Account/Login", loginModel);
 
             switch (response.StatusCode)
             {
