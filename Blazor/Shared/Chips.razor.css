@@ -2,8 +2,8 @@
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    align-items: flex-start;
-    min-height: 32px; /* 空态也有基本高度，可选 */
+    align-items: center; 
+    min-height: 32px;
 }
 
 .pill {

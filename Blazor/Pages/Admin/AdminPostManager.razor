@@ -6,26 +6,32 @@
     <div class="toolbar">
         <div class="toolbar-item">
             <div class="label">Tags:</div>
-            <Chips Items=TagNames Selected=TagsSelected Type=ChipType.Checkbox></Chips>
+            <div class="chips-wrapper">
+                <Chips Items=TagNames Selected=TagsSelected Type=ChipType.Checkbox></Chips>
+                <button class="btn-add" @onclick="OpenTagModal" title="新增标签">+</button>
+            </div>
         </div>
         <div class="toolbar-item">
             <div class="label">Categories:</div>
-            <Chips Items=CtgryNames Selected=CtgriesSelected Type=ChipType.Radio></Chips>
+            <div class="chips-wrapper">
+                <Chips Items=CtgryNames Selected=CtgriesSelected Type=ChipType.Radio></Chips>
+                <button class="btn-add" @onclick="OpenCategoryModal" title="新增分类">+</button>
+            </div>
         </div>
         <div class="toolbar-item">
-            <div class="label">Title:</div>
+            <div class="label-container">
+                <div class="label">Title:</div>
+            </div>
             <InputText class="title-input" @bind-Value=PostTitle placeholder="请输入标题..." />
         </div>
         <button class="btn-pill" @onclick=OnSubmit>Submit</button>
     </div>
 
     <div class="grid-container">
-        <!-- 左边输入 -->
         <div class="left-panel">
             <textarea @bind="InputText" @bind:event="oninput" placeholder="请输入原始文字..."></textarea>
         </div>
 
-        <!-- 右边展示 -->
         <div class="right-panel">
             <div class="output-box">
                 @if (string.IsNullOrWhiteSpace(InputText))
@@ -40,5 +46,28 @@
         </div>
     </div>
 
+    @if (ShowModal)
+    {
+        <div class="modal-overlay">
+            <div class="modal-panel">
+                <h3>@(IsAddingTag ? "增加新标签" : "增加新分类")</h3>
+
+                @if (IsAddingTag)
+                {
+                    <input class="modal-input" @bind="NewItemName" placeholder="输入标签名称..." />
+                }
+                else
+                {
+                    <input class="modal-input" @bind="NewItemName" placeholder="输入分类名称..." />
+                    <input class="modal-input" @bind="NewCategoryDesc" placeholder="输入分类描述 (选填)..." style="margin-top: 10px;" />
+                }
+
+                <div class="modal-actions">
+                    <button class="btn-cancel" @onclick="CloseModal">取消</button>
+                    <button class="btn-confirm" @onclick="ConfirmAdd">确定</button>
+                </div>
+            </div>
+        </div>
+    }
 
 </AdminLayout>

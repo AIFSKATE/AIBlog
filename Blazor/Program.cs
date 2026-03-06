@@ -1,6 +1,7 @@
 using Blazor.Commons;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using MudBlazor.Services;
 
 namespace Blazor
 {
@@ -14,6 +15,7 @@ namespace Blazor
 
             var baseAddress = builder.Configuration.GetValue<string>("BaseAddress") ?? "https://aifskate.com/api/";
 
+            builder.Services.AddMudServices();
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(baseAddress) });
             builder.Services.AddSingleton<Utils>();
 
