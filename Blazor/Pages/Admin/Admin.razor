@@ -7,36 +7,67 @@
         </MudText>
 
         <MudGrid Justify="Justify.Center" Spacing="4">
-            <MudItem xs="12" sm="6" md="4">
-                <MudPaper Elevation="2" Class="pa-6 text-center py-8 mud-theme-primary">
-                    <MudIcon Icon="@Icons.Material.Filled.EditNote" Size="Size.Large" Class="mb-2" />
-                    <MudLink Href="/admin/post" Typo="Typo.h6" Color="Color.Inherit" Underline="Underline.None" Class="d-block stretched-link">新增文章</MudLink>
-                </MudPaper>
-            </MudItem>
-            <MudItem xs="12" sm="6" md="4">
-                <MudPaper Elevation="2" Class="pa-6 text-center py-8">
-                    <MudIcon Icon="@Icons.Material.Filled.LibraryBooks" Size="Size.Large" Color="Color.Primary" Class="mb-2" />
-                    <MudLink Href="/posts" Typo="Typo.h6" Color="Color.Inherit" Underline="Underline.None" Class="d-block stretched-link">文章管理</MudLink>
-                </MudPaper>
-            </MudItem>
-            <MudItem xs="12" sm="6" md="4">
-                <MudPaper Elevation="2" Class="pa-6 text-center py-8">
-                    <MudIcon Icon="@Icons.Material.Filled.Category" Size="Size.Large" Color="Color.Secondary" Class="mb-2" />
-                    <MudLink Href="/admin/categories" Typo="Typo.h6" Color="Color.Inherit" Underline="Underline.None" Class="d-block stretched-link">分类管理</MudLink>
-                </MudPaper>
-            </MudItem>
-            <MudItem xs="12" sm="6" md="4">
-                <MudPaper Elevation="2" Class="pa-6 text-center py-8">
-                    <MudIcon Icon="@Icons.Material.Filled.LocalOffer" Size="Size.Large" Color="Color.Info" Class="mb-2" />
-                    <MudLink Href="/tags" Typo="Typo.h6" Color="Color.Inherit" Underline="Underline.None" Class="d-block stretched-link">标签管理</MudLink>
-                </MudPaper>
-            </MudItem>
-            <MudItem xs="12" sm="6" md="4">
-                <MudPaper Elevation="2" Class="pa-6 text-center py-8">
-                    <MudIcon Icon="@Icons.Material.Filled.Link" Size="Size.Large" Color="Color.Success" Class="mb-2" />
-                    <MudLink Href="/admin/friendlinks" Typo="Typo.h6" Color="Color.Inherit" Underline="Underline.None" Class="d-block stretched-link">友链管理</MudLink>
-                </MudPaper>
-            </MudItem>
+            @foreach (var item in AdminItems)
+            {
+                <MudItem xs="12" sm="6" md="4">
+                    <MudLink class="admin-nav-card" href="@item.TargetUrl">
+                        <MudIcon Icon="@item.Icon" Size="Size.Large" Color="Color.Primary" Class="mb-2" />
+                        <MudText Typo="Typo.h6" Class="fw-bold">@item.Title</MudText>
+                    </MudLink>
+                </MudItem>
+            }
         </MudGrid>
     </MudContainer>
 </AdminLayout>
+
+@code {
+    private class AdminItem
+    {
+        public string Title { get; set; } = string.Empty;
+        public string Icon { get; set; } = string.Empty;
+        public string TargetUrl { get; set; } = string.Empty;
+    }
+
+    private List<AdminItem> AdminItems => new()
+    {
+        new() { Title = "新增文章", Icon = Icons.Material.Filled.EditNote, TargetUrl = "/admin/post" },
+        new() { Title = "文章管理", Icon = Icons.Material.Filled.LibraryBooks, TargetUrl = "/posts" },
+        new() { Title = "分类管理", Icon = Icons.Material.Filled.Category, TargetUrl = "/admin/categories" },
+        new() { Title = "标签管理", Icon = Icons.Material.Filled.LocalOffer, TargetUrl = "/tags" },
+        new() { Title = "友链管理", Icon = Icons.Material.Filled.Link, TargetUrl = "/admin/friendlinks" }
+    };
+}
+
+<style>
+    /* 将 NavLink 样式化为全卡片 */
+    .admin-nav-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 32px 16px; /* 对应之前的 pa-8 */
+        /* 线框感设计 */
+        border: 1px solid var(--mud-palette-lines-inputs);
+        border-radius: 12px;
+        background-color: transparent;
+        /* 移除超链接默认下划线和颜色 */
+        text-decoration: none !important;
+        color: var(--mud-palette-text-primary) !important;
+        transition: all 0.2s ease-in-out;
+        cursor: pointer;
+    }
+
+        /* 悬停效果：边框变色 + 轻微上浮 */
+        .admin-nav-card:hover {
+            border-color: var(--mud-palette-primary);
+            background-color: var(--mud-palette-background-grey);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        /* 激活状态（如果你在当前页面，卡片可以有不同颜色，不需要可删掉） */
+        .admin-nav-card.active {
+            border-color: var(--mud-palette-primary);
+            background-color: var(--mud-palette-primary-lighten);
+        }
+</style>

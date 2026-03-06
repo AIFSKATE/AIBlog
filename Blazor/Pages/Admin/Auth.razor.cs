@@ -1,5 +1,4 @@
 ﻿using Domain.Account;
-using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using System.Net.Http.Json;
 
@@ -7,8 +6,6 @@ namespace Blazor.Pages.Admin
 {
     public partial class Auth
     {
-        [Inject] private ISnackbar Snackbar { get; set; } = default!;
-
         private LoginInfo loginModel = new();
 
         protected override async Task OnInitializedAsync()

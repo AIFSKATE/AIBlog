@@ -11,7 +11,6 @@ else
 }
 
 @code {
-    // 你的 C# 代码块保持完全不变，不用动！
     [Parameter] public RenderFragment ChildContent { get; set; }
     private bool isLogin { get; set; }
     protected override async Task OnInitializedAsync()
@@ -19,7 +18,8 @@ else
         var token = await Utils.GetTokenAsync();
         if (string.IsNullOrEmpty(token))
         {
-            isLogin = false; await Utils.NavigateTo("/");
+            isLogin = false; 
+            await Utils.NavigateTo("/");
         }
         else
         {
