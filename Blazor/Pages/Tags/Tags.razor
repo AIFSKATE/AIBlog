@@ -1,29 +1,41 @@
 ﻿@page "/tags"
 
+<MudContainer MaxWidth="MaxWidth.Medium" Class="mt-8 mb-4">
+    @* 标题区域 *@
+    <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-8" Style="font-weight: bold;">
+        - Tags -
+    </MudText>
 
-@if (PostTags == null)
-{
-    <Loading />
-}
-else
-{
-    <div class="container">
-        <div class="post-wrap tags">
-            <h2 class="post-title">-&nbsp;Tags&nbsp;-</h2>
-            <div class="tag-cloud-tags">
-                @if (PostTags.Any())
-                {
-                    @foreach (var item in PostTags)
-                    {
-                        @* <a href="/tag/@item.TagName/">@item.TagName<small>(@item.Count)</small></a> *@
-                        <a href="/tag/@item.Id">@item.TagName</a>
-                    }
-                }
-                else
-                {
-                    <ErrorTip />
-                }
-            </div>
+    @if (PostTags == null)
+    {
+        @* 替换了你原有的 <Loading /> *@
+        <div class="d-flex justify-center my-16">
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
         </div>
-    </div>
-}
+    }
+    else if (!PostTags.Any())
+    {
+        @* 替换了你原有的 <ErrorTip /> *@
+        <div class="d-flex justify-center my-8">
+            <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">暂无标签数据</MudAlert>
+        </div>
+    }
+    else
+    {
+        @* 标签云区域：flex-wrap 允许自动换行，gap-3 提供标签间距 *@
+        <div class="d-flex flex-wrap justify-center gap-3">
+            @foreach (var item in PostTags)
+            {
+                @* 使用 Variant.Outlined 和 rounded-pill 让它看起来像一个现代化的胶囊标签。
+                   text-transform-none 可以防止英文标签被自动转成全大写。
+                *@
+                <MudButton Href="@($"/tag/{item.Id}")"
+                           Variant="Variant.Outlined"
+                           Color="Color.Primary"
+                           Class="rounded-pill px-4 text-transform-none">
+                    @item.TagName
+                </MudButton>
+            }
+        </div>
+    }
+</MudContainer>

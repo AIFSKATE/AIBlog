@@ -1,33 +1,38 @@
 ﻿@page "/friendlinks"
 
-@if (friendLinks == null)
-{
-    <Loading />
-}
-else
-{
-    <div class="container">
-        <div class="post-wrap categories">
-            <h2 class="post-title">-&nbsp;FriendLinks&nbsp;-</h2>
-            <div class="categories-card">
-                @if (friendLinks.Any())
-                {
-                    @foreach (var item in friendLinks)
-                    {
-                        <div class="card-item">
-                            <div class="categories">
-                                <a target="_blank" href="@item.LinkUrl">
-                                    <h3>@item.Title</h3>
-                                </a>
-                            </div>
-                        </div>
-                    }
-                }
-                else
-                {
-                    <ErrorTip />
-                }
-            </div>
+<MudContainer MaxWidth="MaxWidth.Medium" Class="mt-8 mb-4">
+    <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-8 fw-bold">
+        - FriendLinks -
+    </MudText>
+
+    @if (friendLinks == null)
+    {
+        @* 数据为 null，展示加载圈 *@
+        <div class="d-flex justify-center my-16">
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
         </div>
-    </div>
-}
+    }
+    else if (!friendLinks.Any())
+    {
+        @* 数据不为 null 但为空集合，展示空提示 *@
+        <div class="d-flex justify-center my-8">
+            <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">暂无友链数据</MudAlert>
+        </div>
+    }
+    else
+    {
+        @* 数据正常，直接在这里展示网格即可，不需要再判断一次 *@
+        <MudGrid>
+            @foreach (var item in friendLinks)
+            {
+                <MudItem xs="12" sm="6" md="4">
+                    <MudPaper Elevation="1" Class="pa-6 h-100 d-flex justify-center align-center">
+                        <MudLink Href="@item.LinkUrl" Target="_blank" Typo="Typo.h6" Underline="Underline.Hover" Color="Color.Primary">
+                            @item.Title
+                        </MudLink>
+                    </MudPaper>
+                </MudItem>
+            }
+        </MudGrid>
+    }
+</MudContainer>

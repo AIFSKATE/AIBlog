@@ -2,72 +2,99 @@
 @page "/admin/post"
 
 <AdminLayout>
+    <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-4 mb-8">
 
-    <div class="toolbar">
-        <div class="toolbar-item">
-            <div class="label">Tags:</div>
-            <div class="chips-wrapper">
-                <Chips Items=TagNames Selected=TagsSelected Type=ChipType.Checkbox></Chips>
-                <button class="btn-add" @onclick="OpenTagModal" title="新增标签">+</button>
-            </div>
-        </div>
-        <div class="toolbar-item">
-            <div class="label">Categories:</div>
-            <div class="chips-wrapper">
-                <Chips Items=CtgryNames Selected=CtgriesSelected Type=ChipType.Radio></Chips>
-                <button class="btn-add" @onclick="OpenCategoryModal" title="新增分类">+</button>
-            </div>
-        </div>
-        <div class="toolbar-item">
-            <div class="label-container">
-                <div class="label">Title:</div>
-            </div>
-            <InputText class="title-input" @bind-Value=PostTitle placeholder="请输入标题..." />
-        </div>
-        <button class="btn-pill" @onclick=OnSubmit>Submit</button>
-    </div>
+        @* 顶部工具栏 *@
+        <MudPaper Elevation="1" Class="pa-4 mb-4">
+            <MudGrid VerticalAlign="VerticalAlign.Center">
+                <MudItem xs="12" md="8">
+                    <MudTextField @bind-Value="PostTitle" Label="Title" Placeholder="请输入标题..." Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudItem>
+                <MudItem xs="12" md="4" Class="d-flex justify-end">
+                    <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="OnSubmit" StartIcon="@Icons.Material.Filled.Save">提交文章</MudButton>
+                </MudItem>
 
-    <div class="grid-container">
-        <div class="left-panel">
-            <textarea @bind="InputText" @bind:event="oninput" placeholder="请输入原始文字..."></textarea>
-        </div>
+                <MudItem xs="12">
+                    <div class="d-flex align-center flex-wrap gap-2">
+                        <MudText Typo="Typo.subtitle2" Class="fw-bold mr-2" Style="width: 80px;">Tags:</MudText>
+                        @for (int i = 0; i < AllTags.Count; i++)
+                        {
+                            var index = i; // 防止闭包陷阱
+                            var tag = AllTags[index];
+                            bool isSelected = TagsSelected[index] == 1;
+                            <MudChip T="string" Size="Size.Small"
+                                     Color="@(isSelected ? Color.Primary : Color.Default)"
+                                     Variant="@(isSelected ? Variant.Filled : Variant.Outlined)"
+                                     OnClick="@(() => TagsSelected[index] = isSelected ? 0 : 1)">
+                                @tag.TagName
+                            </MudChip>
+                        }
+                        <MudIconButton Icon="@Icons.Material.Filled.Add" Size="Size.Small" Color="Color.Primary" Variant="Variant.Outlined" OnClick="OpenTagModal" Title="新增标签" />
+                    </div>
+                </MudItem>
 
-        <div class="right-panel">
-            <div class="output-box">
-                @if (string.IsNullOrWhiteSpace(InputText))
+                <MudItem xs="12">
+                    <div class="d-flex align-center flex-wrap gap-2">
+                        <MudText Typo="Typo.subtitle2" Class="fw-bold mr-2" Style="width: 80px;">Categories:</MudText>
+                        @for (int i = 0; i < AllCategories.Count; i++)
+                        {
+                            var index = i;
+                            var cat = AllCategories[index];
+                            bool isSelected = CtgriesSelected[index] == 1;
+                            <MudChip T="string" Size="Size.Small"
+                                     Color="@(isSelected ? Color.Secondary : Color.Default)"
+                                     Variant="@(isSelected ? Variant.Filled : Variant.Outlined)"
+                                     OnClick="@(() => SetCategory(index))">
+                                @cat.CategoryName
+                            </MudChip>
+                        }
+                        <MudIconButton Icon="@Icons.Material.Filled.Add" Size="Size.Small" Color="Color.Secondary" Variant="Variant.Outlined" OnClick="OpenCategoryModal" Title="新增分类" />
+                    </div>
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+
+        @* 左右分栏编辑器区 (固定高度 70vh) *@
+        <MudGrid Spacing="4" Style="height: 70vh;">
+            @* 左侧：输入区 *@
+            <MudItem xs="12" md="6" Class="h-100 d-flex flex-column">
+                <MudTextField T="string" @bind-Value="InputText" @bind-Value:event="oninput"
+                              Variant="Variant.Outlined" Placeholder="请输入原始文字..."
+                              Lines="25" Style="height: 100%; overflow-y: auto; font-family: monospace;" />
+            </MudItem>
+
+            @* 右侧：预览区 *@
+            <MudItem xs="12" md="6" Class="h-100">
+                <MudPaper Class="pa-4 h-100 mud-background-gray" Elevation="1" Style="overflow-y: auto; overflow-wrap: break-word;">
+                    @if (string.IsNullOrWhiteSpace(InputText))
+                    {
+                        <MudText Color="Color.Secondary" Typo="Typo.body2"><em>这里将显示你的输入内容...</em></MudText>
+                    }
+                    else
+                    {
+                        @((MarkupString)HtmlText)
+                    }
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+
+        @* 弹窗：新增标签/分类 *@
+        <MudDialog @bind-IsVisible="ShowModal" Options="new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true }">
+            <TitleContent>
+                <MudText Typo="Typo.h6">@(IsAddingTag ? "增加新标签" : "增加新分类")</MudText>
+            </TitleContent>
+            <DialogContent>
+                <MudTextField @bind-Value="NewItemName" Label="@(IsAddingTag ? "输入名称..." : "输入分类名称...")" Variant="Variant.Outlined" Class="mb-4" />
+                @if (!IsAddingTag)
                 {
-                    <em>这里将显示你的输入内容...</em>
+                    <MudTextField @bind-Value="NewCategoryDesc" Label="输入分类描述 (选填)..." Variant="Variant.Outlined" />
                 }
-                else
-                {
-                    <p>@((MarkupString)HtmlText)</p>
-                }
-            </div>
-        </div>
-    </div>
+            </DialogContent>
+            <DialogActions>
+                <MudButton OnClick="CloseModal">取消</MudButton>
+                <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="ConfirmAdd">确定</MudButton>
+            </DialogActions>
+        </MudDialog>
 
-    @if (ShowModal)
-    {
-        <div class="modal-overlay">
-            <div class="modal-panel">
-                <h3>@(IsAddingTag ? "增加新标签" : "增加新分类")</h3>
-
-                @if (IsAddingTag)
-                {
-                    <input class="modal-input" @bind="NewItemName" placeholder="输入标签名称..." />
-                }
-                else
-                {
-                    <input class="modal-input" @bind="NewItemName" placeholder="输入分类名称..." />
-                    <input class="modal-input" @bind="NewCategoryDesc" placeholder="输入分类描述 (选填)..." style="margin-top: 10px;" />
-                }
-
-                <div class="modal-actions">
-                    <button class="btn-cancel" @onclick="CloseModal">取消</button>
-                    <button class="btn-confirm" @onclick="ConfirmAdd">确定</button>
-                </div>
-            </div>
-        </div>
-    }
-
+    </MudContainer>
 </AdminLayout>

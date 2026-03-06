@@ -11,7 +11,6 @@ namespace Blazor.Pages.Tags
         {
             // 获取数据
             PostTags = await HttpClient.GetFromJsonAsync<List<TagDTO>>("Tag/QueryAllTags");
-            await InvokeAsync(StateHasChanged);
         }
     }
 }

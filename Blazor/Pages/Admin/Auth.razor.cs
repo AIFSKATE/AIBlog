@@ -1,18 +1,18 @@
 ﻿using Domain.Account;
+using Microsoft.AspNetCore.Components;
+using MudBlazor;
 using System.Net.Http.Json;
 
 namespace Blazor.Pages.Admin
 {
     public partial class Auth
     {
+        [Inject] private ISnackbar Snackbar { get; set; } = default!;
+
         private LoginInfo loginModel = new();
-        private bool ShowMessage;
-        private string Message = "Login failed, please try again.";
-        private CancellationTokenSource? Cts;
 
         protected override async Task OnInitializedAsync()
         {
-            // 检查是否已经登录
             var token = await Utils.GetTokenAsync();
             if (!string.IsNullOrEmpty(token))
             {
@@ -24,7 +24,9 @@ namespace Blazor.Pages.Admin
                 await Utils.NavigateTo("admin");
                 return;
             }
-            await ShowInfoAsync("Token已过期");
+
+            // Replaced manual method with MudBlazor Snackbar
+            Snackbar.Add("Token已过期，请重新登录", Severity.Warning);
         }
 
         private async Task HandleLoginAsync()
@@ -34,19 +36,19 @@ namespace Blazor.Pages.Admin
             switch (response.StatusCode)
             {
                 case System.Net.HttpStatusCode.NotFound:
-                    await ShowInfoAsync("用户不存在");
+                    Snackbar.Add("用户不存在", Severity.Error);
                     break;
                 case System.Net.HttpStatusCode.BadRequest:
-                    await ShowInfoAsync("用户名或密码错误");
+                    Snackbar.Add("用户名或密码错误", Severity.Error);
                     break;
                 case System.Net.HttpStatusCode.Forbidden:
-                    await ShowInfoAsync("账号已被锁定");
+                    Snackbar.Add("账号已被锁定", Severity.Error);
                     break;
                 case System.Net.HttpStatusCode.OK:
                     await LoginSuccessAsync(response);
                     break;
                 default:
-                    await ShowInfoAsync("发生未知错误");
+                    Snackbar.Add("发生未知错误", Severity.Error);
                     break;
             }
         }
@@ -55,20 +57,10 @@ namespace Blazor.Pages.Admin
         {
             var token = await response.Content.ReadAsStringAsync();
             HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-            Console.WriteLine("登陆成功");
             await Utils.SetTokenAsync(token);
-            await Utils.NavigateTo("admin");
-        }
 
-        private async Task ShowInfoAsync(string str)
-        {
-            Cts?.Cancel();
-            Cts = new CancellationTokenSource();
-            Message = str;
-            ShowMessage = true;
-            await InvokeAsync(StateHasChanged);
-            await Task.Delay(3000, Cts.Token);
-            ShowMessage = false;
+            Snackbar.Add("登录成功", Severity.Success);
+            await Utils.NavigateTo("admin");
         }
 
     }

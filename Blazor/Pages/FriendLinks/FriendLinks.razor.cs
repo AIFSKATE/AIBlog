@@ -9,9 +9,8 @@ namespace Blazor.Pages.FriendLinks
 
         protected override async Task OnInitializedAsync()
         {
-            // 获取数据
+            // 获取数据，全局 HttpClient 发起请求
             friendLinks = await HttpClient.GetFromJsonAsync<List<FriendLinkDTO>>("FriendLink/QueryFriendLinks");
-            await InvokeAsync(StateHasChanged);
         }
     }
 }

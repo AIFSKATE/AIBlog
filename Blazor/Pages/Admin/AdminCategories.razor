@@ -1,50 +1,54 @@
 ﻿@page "/admin/categories"
 
 <AdminLayout>
-    @if (categories == null)
-    {
-        <Loading />
-    }
-    else
-    {
-        <div class="post-wrap categories">
-            <h2 class="post-title">-&nbsp;Categories&nbsp;-</h2>
-            @if (categories.Any())
-            {
-                <div class="categories-card">
-                    @foreach (var item in categories)
-                    {
-                        <div class="card-item">
-                            <div class="categories">
-                                <NavLink title="❌删除" @onclick="@(async () => await DeleteAsync(item.Id))">❌</NavLink>
-                                <NavLink title="📝编辑" @onclick="@(() => UpdateCategory(item))">📝</NavLink>
-                                <NavLink target="_blank" href="@($"/category/{item.Id}")">
-                                    <h3>@item.CategoryName</h3>
-                                    <small>(@item.ArticleCount)</small>
-                                </NavLink>
-                            </div>
-                        </div>
-                    }
-                    <div class="card-item">
-                        <div class="categories">
-                            <NavLink><h3 @onclick=@AddCategory>📕~~~ 新增分类 ~~~📕</h3></NavLink>
-                        </div>
-                    </div>
-                </div>
-            }
-            else
-            {
-                <ErrorTip />
-            }
-        </div>
+    <MudContainer MaxWidth="MaxWidth.Large" Class="mt-8">
+        @if (categories == null)
+        {
+            <div class="d-flex justify-center my-16">
+                <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+            </div>
+        }
+        else
+        {
+            <MudTable Items="@categories" Hover="true" Elevation="1" Class="mb-8">
+                <ToolBarContent>
+                    <MudText Typo="Typo.h6" Class="fw-bold">- Categories -</MudText>
+                    <MudSpacer />
+                    <MudButton Color="Color.Primary" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add" OnClick="AddCategory">新增分类</MudButton>
+                </ToolBarContent>
+                <HeaderContent>
+                    <MudTh>ID</MudTh>
+                    <MudTh>分类名称</MudTh>
+                    <MudTh>文章数</MudTh>
+                    <MudTh Style="text-align:right">操作</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="ID">@context.Id</MudTd>
+                    <MudTd DataLabel="分类名称">
+                        <MudLink Href="@($"/category/{context.Id}")" Target="_blank" Color="Color.Primary">@context.CategoryName</MudLink>
+                    </MudTd>
+                    <MudTd DataLabel="文章数">@context.ArticleCount</MudTd>
+                    <MudTd DataLabel="操作" Style="text-align:right">
+                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Info" Title="编辑" OnClick="@(() => UpdateCategory(context))" />
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Title="删除" OnClick="@(async () => await DeleteAsync(context.Id))" />
+                    </MudTd>
+                </RowTemplate>
+            </MudTable>
 
-        <Box Open="@Open" OnCancel="OnCancel" OnConfirm="OnConfirm">
-            <div class="box-item">
-                CategoryName:<input type="text" @bind="@UploadData.CategoryName" @bind:event="oninput" />
-            </div>
-            <div class="box-item">
-                Description:<input type="text" @bind="@UploadData.Description" @bind:event="oninput" />
-            </div>
-        </Box>
-    }
+            @* 使用内置 Dialog 替代你的 Box 组件 *@
+            <MudDialog @bind-IsVisible="Open" Options="new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true }">
+                <TitleContent>
+                    <MudText Typo="Typo.h6">分类信息管理</MudText>
+                </TitleContent>
+                <DialogContent>
+                    <MudTextField @bind-Value="UploadData.CategoryName" Label="CategoryName" Variant="Variant.Outlined" Class="mb-4" />
+                    <MudTextField @bind-Value="UploadData.Description" Label="Description" Variant="Variant.Outlined" />
+                </DialogContent>
+                <DialogActions>
+                    <MudButton OnClick="OnCancel">取消</MudButton>
+                    <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="OnConfirm">确定</MudButton>
+                </DialogActions>
+            </MudDialog>
+        }
+    </MudContainer>
 </AdminLayout>

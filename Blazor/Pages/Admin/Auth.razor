@@ -1,21 +1,39 @@
 ﻿@page "/auth"
 
-<Hint Show=@ShowMessage>@Message</Hint>
+<MudContainer MaxWidth="MaxWidth.Small" Class="d-flex align-center justify-center" Style="min-height: 75vh;">
+    <MudCard Elevation="4" Class="pa-8 d-flex flex-column justify-center" Style="width: 100%; max-width: 400px; border-radius: 12px; min-height: 400px;">
 
-<div class="login-form">
-    <EditForm Model="@loginModel" OnValidSubmit="HandleLoginAsync">
-        <DataAnnotationsValidator />
-        <div>
-            <label for="username">Username:</label>
-            <InputText id="username" @bind-Value="loginModel.Name" />
-        </div>
+        <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-8 fw-bold text-primary">
+            AIBlog Admin
+        </MudText>
 
-        <div>
-            <label for="password">Password:</label>
-            <InputText id="password" @bind-Value="loginModel.Password" type="password" />
-        </div>
+        <EditForm Model="@loginModel" OnValidSubmit="HandleLoginAsync">
+            <DataAnnotationsValidator />
 
-        <button type="submit">Login</button>
-        <ValidationSummary />
-    </EditForm>
-</div>
+            <MudTextField @bind-Value="loginModel.Name"
+                          Label="Username"
+                          Variant="Variant.Outlined"
+                          Margin="Margin.Dense"
+                          Class="mb-6"
+                          For="@(() => loginModel.Name)" />
+
+            <MudTextField @bind-Value="loginModel.Password"
+                          Label="Password"
+                          InputType="InputType.Password"
+                          Variant="Variant.Outlined"
+                          Margin="Margin.Dense"
+                          Class="mb-8"
+                          For="@(() => loginModel.Password)" />
+
+            <MudButton ButtonType="ButtonType.Submit"
+                       Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       Size="Size.Large"
+                       FullWidth="true"
+                       Class="fw-bold py-3">
+                Login
+            </MudButton>
+        </EditForm>
+
+    </MudCard>
+</MudContainer>

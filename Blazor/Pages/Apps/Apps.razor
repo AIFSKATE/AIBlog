@@ -1,15 +1,22 @@
 ﻿@page "/apps"
 
-<div class="container">
-    <div class="post-wrap">
-        <h2 class="post-title">-&nbsp;Apps&nbsp;-</h2>
-        <ul>
-            <li>
-                <a target="_blank" href="https://www.bilibili.com/"><h3>我最爱的霹雳霹雳</h3></a>
-            </li>
-            <li>
-                <NavLink href="/friendlinks"><h3>友情链接</h3></NavLink>
-            </li>
-        </ul>
-    </div>
-</div>
+<MudContainer MaxWidth="MaxWidth.Medium" Class="mt-8 mb-4">
+    <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-8 fw-bold">
+        - Apps -
+    </MudText>
+
+    @* 使用 MudStack 实现垂直间距 *@
+    <MudStack Spacing="4">
+        <MudPaper Class="pa-4" Elevation="1">
+            <MudLink Href="https://www.bilibili.com/" Target="_blank" Typo="Typo.h6" Underline="Underline.Hover" Color="Color.Primary">
+                我最爱的霹雳霹雳
+            </MudLink>
+        </MudPaper>
+
+        <MudPaper Class="pa-4" Elevation="1">
+            <MudLink Href="/friendlinks" Typo="Typo.h6" Underline="Underline.Hover" Color="Color.Primary">
+                友情链接
+            </MudLink>
+        </MudPaper>
+    </MudStack>
+</MudContainer>

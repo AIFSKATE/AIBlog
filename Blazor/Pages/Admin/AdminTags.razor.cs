@@ -1,5 +1,4 @@
 ﻿using Mapper.DTO;
-using Microsoft.AspNetCore.Components.Web;
 using System.Net.Http.Json;
 
 namespace Blazor.Pages.Admin
@@ -9,81 +8,63 @@ namespace Blazor.Pages.Admin
         List<TagDTO> Tags;
         bool Open { get; set; } = false;
         TagDTO UploadData = new();
-        public Action<MouseEventArgs> OnConfirm { get; set; }
-        public Action<MouseEventArgs> OnCancel { get; set; }
-        bool ShowMessage { get; set; } = false;
-        string Message { get; set; } = "发生错误";
 
+        // 使用 Action 替代带参数的鼠标事件，更简洁
+        public Action OnConfirm { get; set; }
+        public Action OnCancel { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
-            await base.OnInitializedAsync();
             OnCancel = Close;
             Tags = await HttpClient.GetFromJsonAsync<List<TagDTO>>("Tag/QueryAllTags");
         }
 
-
-        /// <summary>
-        /// 删除分类
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         protected async Task DeleteTagAsync(int id)
         {
-            // 弹窗确认
             bool confirmed = await Utils.InvokeAsync<bool>("confirm", "\n💥💢真的要干掉这个该死的分类吗💢💥");
-
             if (confirmed)
             {
                 var response = await HttpClient.DeleteAsync($"Tag/DeleteTag?tagId={id}");
-
                 if (response.IsSuccessStatusCode)
                 {
                     Tags = await HttpClient.GetFromJsonAsync<List<TagDTO>>("Tag/QueryAllTags");
-                    await InvokeAsync(StateHasChanged);
                 }
             }
         }
 
-        protected async void Close(MouseEventArgs e)
+        protected void Close()
         {
             Open = false;
         }
 
-        protected async Task UpdateTag(TagDTO tagDTO)
+        protected void UpdateTag(TagDTO tagDTO)
         {
             Open = true;
             UploadData = tagDTO;
             OnConfirm = UpdateSubmit;
         }
 
-        private async void UpdateSubmit(MouseEventArgs e)
+        private async void UpdateSubmit()
         {
-            var response = await HttpClient.PutAsJsonAsync<TagDTO>("Tag/UpdateTag", UploadData);
-            if (response.IsSuccessStatusCode)
-            {
-            }
+            var response = await HttpClient.PutAsJsonAsync("Tag/UpdateTag", UploadData);
             Tags = await HttpClient.GetFromJsonAsync<List<TagDTO>>("Tag/QueryAllTags");
-            Close(e);
-            await InvokeAsync(StateHasChanged);
+            Close();
+            StateHasChanged();
         }
 
-        protected async Task AddTag()
+        protected void AddTag()
         {
             Open = true;
+            UploadData = new TagDTO(); // 清空旧数据
             OnConfirm = AddSubmit;
         }
 
-        private async void AddSubmit(MouseEventArgs e)
+        private async void AddSubmit()
         {
-            Console.WriteLine(UploadData.TagName);
             var response = await HttpClient.PostAsJsonAsync("Tag/AddTag", UploadData.TagName);
-            if (response.IsSuccessStatusCode)
-            {
-            }
             Tags = await HttpClient.GetFromJsonAsync<List<TagDTO>>("Tag/QueryAllTags");
-            Close(e);
-            await InvokeAsync(StateHasChanged);
+            Close();
+            StateHasChanged();
         }
     }
 }

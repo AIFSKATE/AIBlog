@@ -78,6 +78,18 @@ namespace Blazor.Pages.Admin
             ShowModal = false;
         }
 
+
+        private void SetCategory(int index)
+        {
+            // 将所有选中状态重置为 0
+            for (int i = 0; i < CtgriesSelected.Count; i++)
+            {
+                CtgriesSelected[i] = 0;
+            }
+            // 将当前点击的设为 1
+            CtgriesSelected[index] = 1;
+        }
+
         private async Task ConfirmAdd()
         {
             if (string.IsNullOrWhiteSpace(NewItemName)) return;

@@ -1,46 +1,50 @@
 ﻿@page "/admin/tags"
 
 <AdminLayout>
-    @if (Tags == null)
-    {
-        <Loading />
-    }
-    else
-    {
-        <div class="post-wrap categories">
-            <h2 class="post-title">-&nbsp;Tags&nbsp;-</h2>
-            @if (Tags.Any())
-            {
-                <div class="categories-card">
-                    @foreach (var item in Tags)
-                    {
-                        <div class="card-item">
-                            <div class="categories">
-                                <NavLink title="❌删除" @onclick="@(async () => await DeleteTagAsync(item.Id))">❌</NavLink>
-                                <NavLink title="📝编辑" @onclick="@(() => UpdateTag(item))">📝</NavLink>
-                                <NavLink target="_blank" href="@($"/tag/{item.Id}")">
-                                    <h3>@item.TagName</h3>
-                                </NavLink>
-                            </div>
-                        </div>
-                    }
-                    <div class="card-item">
-                        <div class="categories">
-                            <NavLink><h3 @onclick=@AddTag>📘~~~ 新增分类 ~~~📘</h3></NavLink>
-                        </div>
-                    </div>
-                </div>
-            }
-            else
-            {
-                <ErrorTip />
-            }
-        </div>
-
-        <Box Open="@Open" OnCancel="OnCancel" OnConfirm="OnConfirm">
-            <div class="box-item">
-                TagName:<input type="text" @bind="@UploadData.TagName" @bind:event="oninput" />
+    <MudContainer MaxWidth="MaxWidth.Large" Class="mt-8">
+        @if (Tags == null)
+        {
+            <div class="d-flex justify-center my-16">
+                <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
             </div>
-        </Box>
-    }
+        }
+        else
+        {
+            <MudTable Items="@Tags" Hover="true" Elevation="1" Class="mb-8">
+                <ToolBarContent>
+                    <MudText Typo="Typo.h6" Class="fw-bold">- Tags -</MudText>
+                    <MudSpacer />
+                    <MudButton Color="Color.Primary" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add" OnClick="AddTag">新增标签</MudButton>
+                </ToolBarContent>
+                <HeaderContent>
+                    <MudTh>ID</MudTh>
+                    <MudTh>标签名称</MudTh>
+                    <MudTh Style="text-align:right">操作</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="ID">@context.Id</MudTd>
+                    <MudTd DataLabel="标签名称">
+                        <MudLink Href="@($"/tag/{context.Id}")" Target="_blank" Color="Color.Primary">@context.TagName</MudLink>
+                    </MudTd>
+                    <MudTd DataLabel="操作" Style="text-align:right">
+                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Info" Title="编辑" OnClick="@(() => UpdateTag(context))" />
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Title="删除" OnClick="@(async () => await DeleteTagAsync(context.Id))" />
+                    </MudTd>
+                </RowTemplate>
+            </MudTable>
+
+            <MudDialog @bind-IsVisible="Open" Options="new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true }">
+                <TitleContent>
+                    <MudText Typo="Typo.h6">标签信息管理</MudText>
+                </TitleContent>
+                <DialogContent>
+                    <MudTextField @bind-Value="UploadData.TagName" Label="TagName" Variant="Variant.Outlined" Class="mb-4" />
+                </DialogContent>
+                <DialogActions>
+                    <MudButton OnClick="OnCancel">取消</MudButton>
+                    <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="OnConfirm">确定</MudButton>
+                </DialogActions>
+            </MudDialog>
+        }
+    </MudContainer>
 </AdminLayout>

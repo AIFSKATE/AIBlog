@@ -1,36 +1,42 @@
 ﻿@page "/categories"
-@if (categories == null)
-{
-    <Loading />
-}
-else
-{
-    <div class="container">
-        <div class="post-wrap categories">
-            <h2 class="post-title">-&nbsp;Categories&nbsp;-</h2>
-            <div class="categories-card">
-                @if (categories != null && categories.Any())
-                {
-                    @foreach (var item in categories)
-                    {
-                        <div class="card-item">
-                            <div class="categories">
-                                <a href="/category/@item.Id">
-                                    <h3>
-                                        <i class="iconfont iconcode" style="padding-right:3px"></i>
-                                        @item.CategoryName
-                                    </h3>
-                                    <small>(@item.Description)</small>
-                                </a>
-                            </div>
-                        </div>
-                    }
-                }
-                else
-                {
-                    <ErrorTip />
-                }
-            </div>
+
+<MudContainer MaxWidth="MaxWidth.Medium" Class="mt-8 mb-4">
+    <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-8 fw-bold">
+        - Categories -
+    </MudText>
+
+    @if (categories == null)
+    {
+        <div class="d-flex justify-center my-16">
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
         </div>
-    </div>
-}
+    }
+    else if (!categories.Any())
+    {
+        <div class="d-flex justify-center my-8">
+            <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">暂无分类数据</MudAlert>
+        </div>
+    }
+    else
+    {
+        <MudGrid>
+            @foreach (var item in categories)
+            {
+                @* 这里的卡片排版稍微宽一点，手机 xs=12，平板和桌面端均为 sm=6（一行两个） *@
+                <MudItem xs="12" sm="6">
+                    <MudPaper Elevation="1" Class="pa-6 h-100 d-flex flex-column justify-center align-center">
+                        <MudLink Href="@($"/category/{item.Id}")" Typo="Typo.h6" Color="Color.Primary" Underline="Underline.Hover" Class="d-flex align-center mb-2">
+                            @* 引入了对应的原生 MudIcon *@
+                            <MudIcon Icon="@Icons.Material.Filled.Code" Size="Size.Small" Class="mr-2" />
+                            @item.CategoryName
+                        </MudLink>
+
+                        <MudText Typo="Typo.body2" Align="Align.Center">
+                            @item.Description
+                        </MudText>
+                    </MudPaper>
+                </MudItem>
+            }
+        </MudGrid>
+    }
+</MudContainer>

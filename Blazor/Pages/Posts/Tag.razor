@@ -1,49 +1,50 @@
 ﻿@page "/tag/{id:int}"
 
-
-@if (PostData == null)
-{
-    <Loading />
-}
-else
-{
-    <div class="container">
-        <div class="post-wrap tags">
-            @if (TagName != null)
-            {
-                <h2 class="post-title">-&nbsp;Tag&nbsp;·&nbsp;@TagName&nbsp;-</h2>
-            }
+<MudContainer MaxWidth="MaxWidth.Medium" Class="mt-8 mb-4">
+    @if (PostData == null)
+    {
+        <div class="d-flex justify-center my-16">
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
         </div>
-        <div class="post-wrap archive">
-            @if (PostData.Count > 0)
-            {
+    }
+    else
+    {
+        @if (!string.IsNullOrEmpty(TagName))
+        {
+            <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-8 fw-bold">
+                - Category · @TagName -
+            </MudText>
+        }
+
+        @if (PostData.Count > 0)
+        {
+            <MudStack Spacing="0">
                 @foreach (var item in PostData.Posts)
                 {
-                    <article class="archive-item">
-                        <NavLink href="@("/post/" + item.Id)">@item.Title</NavLink>
-                        <span class="archive-item-date">@item.CreationTime</span>
-                    </article>
+                    <div class="d-flex justify-space-between align-center py-4 mud-border-bottom">
+                        <MudLink Href="@($"/post/{item.Id}")" Typo="Typo.h6" Underline="Underline.Hover" Color="Color.Default">
+                            @item.Title
+                        </MudLink>
+                        <MudText Typo="Typo.body2" Color="Color.Secondary">@item.CreationTime</MudText>
+                    </div>
                 }
-                <nav class="pagination">
-                    @for (int i = 1; i <= TotalPage; i++)
-                    {
-                        var _page = i;
+            </MudStack>
 
-                        if (page == _page)
-                        {
-                            <span class="page-number current">@_page</span>
-                        }
-                        else
-                        {
-                            <a class="page-number" @onclick="@(() => RenderPage(_page))">@_page</a>
-                        }
-                    }
-                </nav>
-            }
-            else
+            @if (TotalPage > 1)
             {
-                <ErrorTip />
+                <div class="d-flex justify-center mt-8">
+                    <MudPagination Count="@TotalPage"
+                                   Selected="@(page ?? 1)"
+                                   SelectedChanged="OnPageChanged"
+                                   Color="Color.Primary" />
+                </div>
             }
-        </div>
-    </div>
-}
+        }
+        else
+        {
+            <div class="d-flex justify-center my-8">
+                <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">该分类下暂无文章</MudAlert>
+            </div>
+        }
+    }
+</MudContainer>
