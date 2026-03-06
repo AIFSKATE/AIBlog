@@ -1,83 +1,104 @@
 ﻿@page "/post/{Id:int}"
+@using MudBlazor
+@using Microsoft.AspNetCore.Components.Routing
 
-
-
-@if (PostDto == null && !Error)
-{
-    <Loading />
-}
-else if (!Error)
-{
-    <article class="post-wrap">
-        <header class="post-header">
-            <h1 class="post-title">@PostDto.Title</h1>
-            <div class="post-meta">
-                Author: <a itemprop="author" rel="author" href="javascript:;">AIFSKATE</a>
-                <span class="post-time">
-                    Date: <a href="javascript:;">@PostDto.CreationTime</a>
-                </span>
-                <span class="post-category">
-                    Category:<a href="/category/@PostDto.CategoryId/">@(PostDto.CategoryName ?? "无")</a>
-                </span>
+<div class="post-container">
+    @if (PostDto == null && !Error)
+    {
+        <div class="post-loading">
+            <MudCircularProgress Color="Color.Success" Indeterminate="true" />
+            <MudText Typo="Typo.h6" Class="mt-4">加载文章内容中...</MudText>
+        </div>
+    }
+    else if (!Error)
+    {
+        <MudPaper Class="post-paper" Elevation="2">
+            <div class="post-header">
+                <MudText Typo="Typo.h4" Class="post-title" GutterBottom="true">
+                    @PostDto.Title
+                </MudText>
+                
+                <div class="post-meta">
+                    <span class="post-meta-item">
+                        <MudIcon Icon="@Icons.Material.Filled.Person" Size="Size.Small" />
+                        Author: <a class="post-meta-link" href="javascript:;">AIFSKATE</a>
+                    </span>
+                    
+                    <span class="post-meta-item">
+                        <MudIcon Icon="@Icons.Material.Filled.DateRange" Size="Size.Small" />
+                        Date: <a class="post-meta-link" href="javascript:;">@PostDto.CreationTime.ToString("yyyy-MM-dd")</a>
+                    </span>
+                    
+                    <span class="post-meta-item">
+                        <MudIcon Icon="@Icons.Material.Filled.Category" Size="Size.Small" />
+                        Category: <a class="post-meta-link" href="/category/@PostDto.CategoryId/">@(PostDto.CategoryName ?? "无")</a>
+                    </span>
+                </div>
             </div>
-        </header>
-        <section class="post-tags">
-            <div>
-                <span>Tag(s):</span>
-                <span class="tag">
+            
+            <div class="post-tags-section">
+                <MudText Typo="Typo.body2" Class="post-tags-title">Tag(s):</MudText>
+                <div class="post-tags">
                     @if (PostDto.Tags.Any())
                     {
                         @foreach (var tag in PostDto.Tags)
                         {
-                            <a href="/tag/@tag.Id/">@tag.TagName&ensp;</a>
+                            <MudChip T="string" Text="@tag.TagName" Color="Color.Success" Size="Size.Small" 
+                                   OnClick="@(() => NavigateToTag(tag.Id))" />
                         }
                     }
-                </span>
+                    else
+                    {
+                        <MudText Typo="Typo.body2" Class="ml-2">暂无标签</MudText>
+                    }
+                </div>
             </div>
-            @* <div>
-                <a @onclick="async () => await Utils.BaskAsync()">back</a>
-                <span>· </span>
-                <a href="/">home</a>
-            </div> *@
-        </section>
-        <div class="post-content" id="content">
-            @((MarkupString)Markdig.Markdown.ToHtml(PostDto.Markdown))
-        </div>
-        <section class="post-copyright">
-            <p class="copyright-item">
-                <span>Author:</span>
-                <span>AIFSKATE</span>
-            </p>
-            @* <p class="copyright-item">
-                <span>Permalink:</span>
-                <span><a href="/post@PostDto.Url">https://1111</a></span>
-            </p> *@
-            <p class="copyright-item">
-                <span>License:</span>
-                <span>本文采用<a target="_blank" href="http://creativecommons.org/licenses/by-nc-nd/4.0/"> 知识共享 署名-非商业性使用-禁止演绎(CC BY-NC-ND)国际许可协议 </a>进行许可</span>
-            </p>
-        </section>
-        @* <section class="post-nav">
-            @if (PostDto != null)
-            {
-                <a class="prev"
-                   rel="prev"
-                   href="/post/"></a>
-
-            }
-            @if (PostDto != null)
-            {
-                <a class="next"
-                   rel="prev"
-                   href="/post/"></a>
-            }
-
-        </section> *@
-    </article>
-
-}
-else
-{
-    <ErrorTip />
-}
-
+            
+            <div class="post-content" id="content">
+                @((MarkupString)Markdig.Markdown.ToHtml(PostDto.Markdown))
+            </div>
+            
+            <div class="post-copyright">
+                <div class="post-copyright-item">
+                    <span>Author:</span>
+                    <span>AIFSKATE</span>
+                </div>
+                
+                <div class="post-copyright-item">
+                    <span>License:</span>
+                    <span>
+                        本文采用 <a target="_blank" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">
+                        知识共享 署名-非商业性使用-禁止演绎(CC BY-NC-ND)国际许可协议
+                        </a> 进行许可
+                    </span>
+                </div>
+            </div>
+            
+            <div class="post-actions">
+                <MudButton Variant="Variant.Text" Color="Color.Default" 
+                         OnClick="@NavigateToPosts" 
+                         StartIcon="@Icons.Material.Filled.ArrowBack">
+                    返回文章列表
+                </MudButton>
+                
+                <MudButton Variant="Variant.Text" Color="Color.Default" 
+                         OnClick="@NavigateToHome" 
+                         StartIcon="@Icons.Material.Filled.Home">
+                    首页
+                </MudButton>
+            </div>
+        </MudPaper>
+    }
+    else
+    {
+        <MudPaper Class="ma-4 pa-6 text-center" Elevation="1">
+            <MudIcon Icon="@Icons.Material.Filled.Error" Color="Color.Error" Size="Size.Large" Class="mb-3" />
+            <MudText Typo="Typo.h6" GutterBottom="true">文章加载失败</MudText>
+            <MudText Typo="Typo.body2" Class="mb-4">抱歉，无法加载文章内容，请稍后重试</MudText>
+            <MudButton Variant="Variant.Filled" Color="Color.Success" 
+                     OnClick="@NavigateToPosts">
+                返回文章列表
+            </MudButton>
+        </MudPaper>
+    }
+</div>

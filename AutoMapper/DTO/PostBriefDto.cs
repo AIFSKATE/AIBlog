@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Mapper.DTO
+﻿namespace Mapper.DTO
 {
     public class PostBriefDto
     {
@@ -21,6 +15,11 @@ namespace Mapper.DTO
         /// 链接
         /// </summary>
         public string Url { get; set; }
+
+        /// <summary>
+        /// 摘要
+        /// </summary>
+        public string Summary { get; set; }
 
         /// <summary>
         /// 创建时间

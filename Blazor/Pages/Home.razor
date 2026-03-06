@@ -1,32 +1,46 @@
 ﻿@page "/"
+@using MudBlazor
 
-<div class="main">
-    <div class="container">
-        <div class="intro">
-            <div class="avatar">
-                <a href="javascript:;"><img src="https://avatars.githubusercontent.com/u/68407466?s=96&v=4"></a>
-            </div>
-            <div class="nickname">AIBlog</div>
-            <div class="description">
-                <p>
-                    学无止境
-                    <br>Knowledge has no limit
-                </p>
-            </div>
-            <div class="links">
-                <NavLink class="link-item" title="Posts" href="posts">
-                    <i class="iconfont iconread"></i>
-                </NavLink>
-                <NavLink target="_blank" class="link-item" title="Notes">
-                    <i class="iconfont iconnotes"></i>
-                </NavLink>
-                <NavLink class="link-item" title="Manage" href="auth">
-                    <i class="iconfont iconcode"></i>
-                </NavLink>
-                <NavLink target="_blank" class="link-item" title="Github" href="https://github.com/AIFSKATE">
-                    <i class="iconfont icongithub"></i>
-                </NavLink>
-            </div>
+<div class="home-container">
+    <MudPaper Class="home-card" Elevation="8">
+        <div class="home-avatar">
+            <MudAvatar Size="Size.Large" image="https://avatars.githubusercontent.com/u/68407466?s=200&v=4" />
         </div>
-    </div>
+        
+        <MudText Typo="Typo.h3" Class="home-title" GutterBottom="true">
+            AIBlog
+        </MudText>
+        
+        <MudText Typo="Typo.body1" Class="home-description" GutterBottom="true">
+            学无止境
+            <br />
+            Knowledge has no limit
+        </MudText>
+        
+        <div class="home-links">
+            <MudTooltip Text="Posts" Placement="Placement.Bottom">
+                <NavLink class="home-link-item" href="posts">
+                    <MudIcon Icon="@Icons.Material.Filled.Article" Class="home-link-icon" />
+                </NavLink>
+            </MudTooltip>
+            
+            <MudTooltip Text="Notes" Placement="Placement.Bottom">
+                <a class="home-link-item" target="_blank">
+                    <MudIcon Icon="@Icons.Material.Filled.Note" Class="home-link-icon" />
+                </a>
+            </MudTooltip>
+            
+            <MudTooltip Text="Manage" Placement="Placement.Bottom">
+                <NavLink class="home-link-item" href="auth">
+                    <MudIcon Icon="@Icons.Material.Filled.Code" Class="home-link-icon" />
+                </NavLink>
+            </MudTooltip>
+            
+            <MudTooltip Text="GitHub" Placement="Placement.Bottom">
+                <a class="home-link-item" href="https://github.com/AIFSKATE" target="_blank">
+                    <MudIcon Icon="@Icons.Material.Filled.Code" Class="home-link-icon" />
+                </a>
+            </MudTooltip>
+        </div>
+    </MudPaper>
 </div>

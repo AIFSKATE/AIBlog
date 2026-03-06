@@ -1,8 +1,16 @@
 ﻿@inherits LayoutComponentBase
+@using MudBlazor
+
+<MudThemeProvider/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
+
 <div class="wrapper">
     <Header/>
     <main class="content">
-        @Body
+        <MudMainContent>
+            @Body
+        </MudMainContent>
     </main>
     <Footer/>
 </div>

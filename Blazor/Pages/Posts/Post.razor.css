@@ -1,0 +1,232 @@
+/* Post.razor.css - 文章详情样式 */
+
+.post-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.post-paper {
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.post-header {
+    margin-bottom: 2rem;
+}
+
+.post-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #161209;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+.post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    color: #757575;
+    font-size: 0.9rem;
+    align-items: center;
+}
+
+.post-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.post-meta-link {
+    color: #81C784;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.post-meta-link:hover {
+    text-decoration: underline;
+    color: #66BB6A;
+}
+
+.post-tags-section {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+}
+
+.post-tags-title {
+    font-size: 0.9rem;
+    color: #757575;
+    margin-right: 0.5rem;
+}
+
+.post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.post-content {
+    margin-bottom: 2rem;
+    line-height: 1.8;
+}
+
+.post-content ::deep p {
+    margin-bottom: 1rem;
+}
+
+.post-content ::deep h1,
+.post-content ::deep h2,
+.post-content ::deep h3,
+.post-content ::deep h4,
+.post-content ::deep h5,
+.post-content ::deep h6 {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    color: #161209;
+}
+
+.post-content ::deep pre {
+    background-color: #292a2d;
+    color: #f8f8f2;
+    padding: 1rem;
+    border-radius: 4px;
+    overflow-x: auto;
+    margin: 1rem 0;
+    font-family: 'Fira Code', monospace;
+}
+
+.post-content ::deep code {
+    background-color: #f5f5f5;
+    color: #d63284;
+    padding: 0.2rem 0.4rem;
+    border-radius: 3px;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.9em;
+}
+
+.post-content ::deep blockquote {
+    border-left: 4px solid #81C784;
+    padding-left: 1rem;
+    margin-left: 0;
+    color: #616161;
+    font-style: italic;
+    background-color: #f9f9f9;
+    padding: 0.5rem 1rem;
+    margin: 1rem 0;
+}
+
+.post-copyright {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+    border-left: 4px solid #81C784;
+}
+
+.post-copyright-item {
+    margin-bottom: 0.5rem;
+    color: #616161;
+    font-size: 0.9rem;
+}
+
+.post-copyright-item a {
+    color: #81C784;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.post-copyright-item a:hover {
+    text-decoration: underline;
+}
+
+.post-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e0e0e0;
+}
+
+.post-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    text-align: center;
+}
+
+/* 暗色主题适配 */
+::deep .mud-theme-dark .post-paper {
+    background-color: #292a2d;
+}
+
+::deep .mud-theme-dark .post-title {
+    color: #a9a9b3;
+}
+
+::deep .mud-theme-dark .post-meta {
+    color: #b0b0b0;
+}
+
+::deep .mud-theme-dark .post-tags-section {
+    background-color: #424242;
+}
+
+::deep .mud-theme-dark .post-content ::deep h1,
+::deep .mud-theme-dark .post-content ::deep h2,
+::deep .mud-theme-dark .post-content ::deep h3,
+::deep .mud-theme-dark .post-content ::deep h4,
+::deep .mud-theme-dark .post-content ::deep h5,
+::deep .mud-theme-dark .post-content ::deep h6 {
+    color: #a9a9b3;
+}
+
+::deep .mud-theme-dark .post-content ::deep code {
+    background-color: #424242;
+    color: #ff7de9;
+}
+
+::deep .mud-theme-dark .post-copyright {
+    background-color: #424242;
+}
+
+::deep .mud-theme-dark .post-copyright-item {
+    color: #b0b0b0;
+}
+
+::deep .mud-theme-dark .post-actions {
+    border-top: 1px solid #424242;
+}
+
+/* 响应式调整 */
+@media (max-width: 600px) {
+    .post-container {
+        padding: 0 0.5rem;
+        margin: 1rem auto;
+    }
+    
+    .post-paper {
+        padding: 1rem;
+    }
+    
+    .post-title {
+        font-size: 1.5rem;
+    }
+    
+    .post-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .post-actions {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}

@@ -1,8 +1,33 @@
 ﻿<!-- Footer.razor -->
-<footer id="footer" class="footer">
-    <div class="copyright">
-        <span>
-            Powered by <a target="_blank" href="http://dot.net">.NET 8</a> and <a href="http://blazor.net/">Blazor</a>
-        </span>
+@using MudBlazor
+
+<MudPaper Class="footer" Elevation="0">
+    <div class="footer-content">
+        <div class="footer-tech-stack">
+            <span class="footer-tech-item">
+                <MudIcon Icon="@Icons.Material.Filled.Code" Size="Size.Small" />
+                .NET 8
+            </span>
+            <span class="footer-tech-item">
+                <MudIcon Icon="@Icons.Material.Filled.Web" Size="Size.Small" />
+                Blazor
+            </span>
+            <span class="footer-tech-item">
+                <MudIcon Icon="@Icons.Material.Filled.LibraryBooks" Size="Size.Small" />
+                MudBlazor
+            </span>
+        </div>
+        
+        <div class="footer-copyright">
+            <span>
+                Powered by <a target="_blank" href="http://dot.net">.NET 8</a> and <a href="http://blazor.net/">Blazor</a>
+            </span>
+        </div>
+        
+        <div class="footer-links">
+            <a class="footer-link" href="/" title="Home">Home</a>
+            <a class="footer-link" href="/posts" title="Posts">Posts</a>
+            <a class="footer-link" href="https://github.com/AIFSKATE/AIBlog" target="_blank" title="GitHub">GitHub</a>
+        </div>
     </div>
-</footer>
+</MudPaper>

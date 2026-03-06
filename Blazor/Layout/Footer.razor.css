@@ -1,0 +1,112 @@
+/* Footer.razor.css - 极客风格底部样式 */
+
+.footer {
+    background-color: transparent;
+    border-top: 1px solid #e0e0e0;
+    color: #616161;
+    font-family: 'Fira Code Medium', monospace;
+    font-size: 0.875rem;
+    padding: 1.5rem 0;
+    margin-top: auto;
+}
+
+.footer-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.footer-tech-stack {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.footer-tech-item {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    transition: color 0.2s ease;
+}
+
+.footer-tech-item:hover {
+    color: #81C784;
+}
+
+.footer-copyright {
+    text-align: center;
+    line-height: 1.5;
+}
+
+.footer-copyright a {
+    color: #81C784;
+    text-decoration: none;
+    transition: color 0.2s ease;
+    font-weight: 500;
+}
+
+.footer-copyright a:hover {
+    text-decoration: underline;
+    color: #66BB6A;
+}
+
+.footer-links {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.footer-link {
+    color: #757575;
+    text-decoration: none;
+    font-size: 0.75rem;
+    transition: color 0.2s ease;
+}
+
+.footer-link:hover {
+    color: #81C784;
+}
+
+/* 暗色主题适配 */
+::deep .mud-theme-dark .footer {
+    border-top: 1px solid #424242;
+    color: #b0b0b0;
+}
+
+::deep .mud-theme-dark .footer-copyright a {
+    color: #81C784;
+}
+
+::deep .mud-theme-dark .footer-copyright a:hover {
+    color: #A2D5AC;
+}
+
+::deep .mud-theme-dark .footer-link {
+    color: #a9a9b3;
+}
+
+::deep .mud-theme-dark .footer-link:hover {
+    color: #81C784;
+}
+
+/* 响应式调整 */
+@media (max-width: 600px) {
+    .footer {
+        padding: 1rem 0;
+    }
+    
+    .footer-tech-stack {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.75rem;
+    }
+    
+    .footer-links {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.75rem;
+    }
+}

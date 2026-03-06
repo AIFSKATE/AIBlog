@@ -1,29 +1,25 @@
-﻿
-using Blazor.Commons;
+﻿using Blazor.Commons;
+using Microsoft.AspNetCore.Components;
+using System.Threading.Tasks;
 
 namespace Blazor.Layout
 {
     public partial class Header
     {
         /// <summary>
-        /// 下拉菜单是否打开
+        /// 移动菜单是否打开
         /// </summary>
-        private bool collapseNavMenu = false;
+        private bool mobileMenuOpen = false;
 
         /// <summary>
-        /// 导航菜单CSS
+        /// 是否是暗黑主题
         /// </summary>
-        private string NavMenuCssClass => collapseNavMenu ? "active" : null;
+        private bool isDarkTheme = false;
 
         /// <summary>
-        /// 显示/隐藏 菜单
+        /// 切换移动菜单
         /// </summary>
-        private void ToggleNavMenu() => collapseNavMenu = !collapseNavMenu;
-
-        /// <summary>
-        /// 当前主题
-        /// </summary>
-        private string currentTheme = string.Empty;
+        private void ToggleMobileMenu() => mobileMenuOpen = !mobileMenuOpen;
 
         /// <summary>
         /// 初始化
@@ -31,20 +27,19 @@ namespace Blazor.Layout
         /// <returns></returns>
         protected override async Task OnInitializedAsync()
         {
-            currentTheme = await Utils.GetStorageAsync("theme") ?? "Light";
+            var savedTheme = await Utils.GetStorageAsync("theme") ?? "Light";
+            isDarkTheme = savedTheme == "Dark";
 
             await Utils.InvokeAsync("window.func.switchTheme");
         }
 
         /// <summary>
-        /// 切换主题
+        /// 主题切换处理（由 @bind-Checked 自动处理）
         /// </summary>
-        private async Task SwitchTheme()
+        private async Task UpdateTheme()
         {
-            currentTheme = currentTheme == "Light" ? "Dark" : "Light";
-
-            await Utils.SetStorageAsync("theme", currentTheme);
-
+            var theme = isDarkTheme ? "Dark" : "Light";
+            await Utils.SetStorageAsync("theme", theme);
             await Utils.InvokeAsync("window.func.switchTheme");
         }
     }

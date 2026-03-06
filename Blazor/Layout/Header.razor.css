@@ -1,0 +1,45 @@
+.mud-appbar {
+    transition: all 0.2s ease;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+    color: #81C784 !important;
+}
+
+.nav-link-active {
+    font-weight: 900;
+    color: #81C784 !important;
+}
+
+.mobile-menu-toggle {
+    display: none;
+}
+
+@media (max-width: 960px) {
+    .desktop-menu {
+        display: none;
+    }
+    
+    .mobile-menu-toggle {
+        display: block;
+    }
+}
+
+/* 主题切换按钮样式 */
+.theme-switch .mud-switch-track {
+    background-color: #e0e0e0;
+}
+
+.theme-switch .mud-switch-track-checked {
+    background-color: #81C784;
+}
+
+.theme-switch .mud-switch-thumb {
+    background-color: #ffffff;
+}

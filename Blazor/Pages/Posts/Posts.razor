@@ -1,42 +1,116 @@
 ﻿@page "/posts/"
 @page "/posts/page/{page:int}"
 @page "/posts/{page:int}"
+@using MudBlazor
+@using Microsoft.AspNetCore.Components.Routing
+@using Mapper.DTO
 
-@if (PostData == null)
-{
-    <Loading />
-}
-else
-{
-    <div class="post-wrap archive">
-        @if (PostData.Posts.Any())
-        {
-            @foreach (var item in PostData.Posts)
+<div class="posts-container">
+    @if (PostData == null)
+    {
+        <div class="posts-loading">
+            <MudCircularProgress Color="Color.Success" Indeterminate="true" />
+            <MudText Typo="Typo.h6" Class="mt-4">加载中...</MudText>
+        </div>
+    }
+    else
+    {
+        <div class="posts-container">
+            <div class="posts-header">
+                <MudText Typo="Typo.h4" Class="posts-title" GutterBottom="true">文章列表</MudText>
+                <MudText Typo="Typo.body2" Class="posts-count">
+                    共 @PostData.Count 篇文章
+                </MudText>
+            </div>
+
+            @if (PostData.Posts.Any())
             {
-                <article class="archive-item">
-                    <a href="/post/@item.Id">@item.Title</a>
-                    <span class="archive-item-date">@item.CreationTime</span>
-                </article>
-            }
-            <nav class="pagination">
-                @for (int i = 1; i <= TotalPage; i++)
-                {
-                    var _page = i;
+                <MudPaper Class="posts-table" Elevation="2">
+                    <MudTable Items="@PostData.Posts" Hover="true" Dense="true" Breakpoint="Breakpoint.Sm">
+                        <HeaderContent>
+                            <MudTh>标题</MudTh>
+                            <MudTh>发布日期</MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd DataLabel="标题">
+                                <NavLink class="post-link" href="@($"/post/{context.Id}")">
+                                    @context.Title
+                                </NavLink>
+                                @if (!string.IsNullOrEmpty(context.Summary))
+                                {
+                                    <MudText Typo="Typo.body2" Class="post-summary">
+                                        @context.Summary
+                                    </MudText>
+                                }
+                            </MudTd>
+                            <MudTd DataLabel="发布日期">
+                                <span class="post-date">@context.CreationTime</span>
+                            </MudTd>
+                        </RowTemplate>
+                    </MudTable>
+                </MudPaper>
 
-                    if (page == _page)
-                    {
-                        <span class="page-number current">@_page</span>
-                    }
-                    else
-                    {
-                        <a class="page-number" @onclick="@(() => RenderPage(_page))">@_page</a>
-                    }
+                @if (TotalPage > 1)
+                {
+                    <div class="pagination-container">
+                        <MudPagination Count="@TotalPage" Selected="@(currentPage ?? 1)" BoundaryCount="1" 
+                                     SelectedChanged="async (value) => await RenderPage(value)" />
+                    </div>
+                    
+                    <div class="pagination-info">
+                        <MudText Typo="Typo.body2">
+                            第 @(currentPage ?? 1) 页 / 共 @TotalPage 页
+                        </MudText>
+                    </div>
                 }
-            </nav>
-        }
-        else
+            }
+            else
+            {
+                <MudPaper Class="ma-4 pa-6 text-center" Elevation="1">
+                    <MudIcon Icon="@Icons.Material.Filled.Article" Color="Color.Default" Size="Size.Large" Class="mb-3" />
+                    <MudText Typo="Typo.h6" GutterBottom="true">暂无文章</MudText>
+                    <MudText Typo="Typo.body2" Class="mb-4">这里还没有任何文章内容</MudText>
+                    <MudButton Variant="Variant.Filled" Color="Color.Success" OnClick="@(() => NavigationManager.NavigateTo("/"))">
+                        返回首页
+                    </MudButton>
+                </MudPaper>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public int? page { get; set; }
+
+    [Inject] 
+    private NavigationManager NavigationManager { get; set; } = default!;
+
+    private int? currentPage;
+    private int TotalPage;
+    private const int Limit = 15;
+    private QueryPostsDto? PostData;
+
+    protected override async Task OnInitializedAsync()
+    {
+        currentPage = page ?? 1;
+        await RenderPage(currentPage.Value);
+    }
+
+    private async Task RenderPage(int page)
+    {
+        currentPage = page;
+        PostData = await HttpClient.GetFromJsonAsync<QueryPostsDto>($"Post/QueryPosts?page={page}&limit={Limit}");
+        TotalPage = (int)Math.Ceiling(PostData.Count / (double)Limit);
+        StateHasChanged();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!page.HasValue)
         {
-            <ErrorTip />
+            page = 1;
+            await RenderPage(page.Value);
         }
-    </div>
+    }
 }

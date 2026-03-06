@@ -1,0 +1,114 @@
+/* Posts.razor.css - 文章列表样式 */
+
+.posts-container {
+    padding: 2rem 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.posts-header {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.posts-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #81C784;
+    margin-bottom: 1rem;
+}
+
+.posts-count {
+    color: #757575;
+    font-size: 0.9rem;
+}
+
+.posts-table {
+    margin-bottom: 2rem;
+}
+
+.post-link {
+    color: #1976d2;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.post-link:hover {
+    color: #81C784;
+    text-decoration: underline;
+}
+
+.post-date {
+    color: #757575;
+    font-size: 0.875rem;
+}
+
+.post-summary {
+    color: #616161;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-top: 0.5rem;
+}
+
+/* 分页样式 */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.pagination-info {
+    text-align: center;
+    color: #757575;
+    font-size: 0.875rem;
+    margin-top: 1rem;
+}
+
+/* 暗色主题适配 */
+::deep .mud-theme-dark .posts-title {
+    color: #A2D5AC;
+}
+
+::deep .mud-theme-dark .posts-count {
+    color: #b0b0b0;
+}
+
+::deep .mud-theme-dark .post-link {
+    color: #90caf9;
+}
+
+::deep .mud-theme-dark .post-link:hover {
+    color: #81C784;
+}
+
+::deep .mud-theme-dark .post-date {
+    color: #b0b0b0;
+}
+
+::deep .mud-theme-dark .post-summary {
+    color: #a9a9b3;
+}
+
+::deep .mud-theme-dark .pagination-info {
+    color: #b0b0b0;
+}
+
+/* 响应式调整 */
+@media (max-width: 600px) {
+    .posts-container {
+        padding: 1rem;
+    }
+    
+    .posts-title {
+        font-size: 1.75rem;
+    }
+    
+    .post-link {
+        font-size: 0.9rem;
+    }
+    
+    .post-date {
+        font-size: 0.8rem;
+    }
+}

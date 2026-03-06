@@ -1,38 +1,90 @@
-﻿<!-- Header.razor -->
-<header>
-    <nav class="navbar">
-        <div class="container">
-            <div class="navbar-header header-logo">
-                <NavLink class="menu-item" href="/" Match="NavLinkMatch.All">
-                    AIBlog
-                </NavLink>
-            </div>
-            <div class="menu navbar-right">
-                <NavLink class="menu-item" href="posts">Posts</NavLink>
-                @* <NavLink class="menu-item" href="posts" @onclick="@(async () => await Utils.RenderPage("posts"))">Posts</NavLink> *@
-                <NavLink class="menu-item" href="categories">Categories</NavLink>
-                <NavLink class="menu-item" href="tags">Tags</NavLink>
-                <NavLink class="menu-item apps" href="apps">Apps</NavLink>
-                <input id="switch_default" type="checkbox" class="switch_default" @onchange="SwitchTheme" checked="@(currentTheme == "Dark")" />
-                <label for="switch_default" class="toggleBtn"></label>
-            </div>
-        </div>
-    </nav>
-    <nav class="navbar-mobile">
-        <div class="container">
-            <div class="navbar-header">
-                <div>
-                    <NavLink class="menu-item" href="" Match="NavLinkMatch.All">AIBlog</NavLink>
-                    <NavLink @onclick="SwitchTheme">&nbsp;·&nbsp;@currentTheme</NavLink>
-                </div>
-                <div class="menu-toggle" @onclick="ToggleNavMenu">&#9776; Menu</div>
-            </div>
-            <div class="menu @NavMenuCssClass">
-                <NavLink class="menu-item" href="posts">Posts</NavLink>
-                <NavLink class="menu-item" href="categories">Categories</NavLink>
-                <NavLink class="menu-item" href="tags">Tags</NavLink>
-                <NavLink class="menu-item apps" href="apps">Apps</NavLink>
-            </div>
-        </div>
-    </nav>
-</header>
+﻿@using MudBlazor
+@using Microsoft.AspNetCore.Components.Routing
+
+<MudAppBar Elevation="1" Class="mud-appbar" Color="Color.Inherit">
+    <MudSpacer />
+    
+    <MudText Typo="Typo.h6" Class="ma-4">
+        <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">
+            AIBlog
+        </NavLink>
+    </MudText>
+    
+    <MudSpacer />
+    
+    <div class="desktop-menu d-flex align-center gap-2">
+        <MudTooltip Text="Posts" Placement="Placement.Bottom">
+            <NavLink class="nav-link" href="posts">
+                <MudIconButton Icon="@Icons.Material.Filled.Article" Color="Color.Inherit" />
+            </NavLink>
+        </MudTooltip>
+        
+        <MudTooltip Text="Categories" Placement="Placement.Bottom">
+            <NavLink class="nav-link" href="categories">
+                <MudIconButton Icon="@Icons.Material.Filled.Category" Color="Color.Inherit" />
+            </NavLink>
+        </MudTooltip>
+        
+        <MudTooltip Text="Tags" Placement="Placement.Bottom">
+            <NavLink class="nav-link" href="tags">
+                <MudIconButton Icon="@Icons.Material.Filled.Tag" Color="Color.Inherit" />
+            </NavLink>
+        </MudTooltip>
+        
+        <MudTooltip Text="Apps" Placement="Placement.Bottom">
+            <NavLink class="nav-link" href="apps">
+                <MudIconButton Icon="@Icons.Material.Filled.Apps" Color="Color.Inherit" />
+            </NavLink>
+        </MudTooltip>
+        
+        <MudTooltip Text="Toggle Theme" Placement="Placement.Bottom">
+            <MudSwitch T="bool" @bind-checked="@isDarkTheme" @bind-checked:after="@UpdateTheme" Color="Color.Success" Class="theme-switch ma-2">
+                <ChildContent>
+                    @if (isDarkTheme)
+                    {
+                        <MudIcon Icon="@Icons.Material.Filled.DarkMode" Size="Size.Small" />
+                    }
+                    else
+                    {
+                        <MudIcon Icon="@Icons.Material.Filled.LightMode" Size="Size.Small" />
+                    }
+                </ChildContent>
+            </MudSwitch>
+        </MudTooltip>
+    </div>
+    
+    <div class="mobile-menu-toggle">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" OnClick="@ToggleMobileMenu" />
+    </div>
+</MudAppBar>
+
+<MudDrawer @bind-Open="@mobileMenuOpen" Anchor="Anchor.Right" Elevation="2">
+    <MudDrawerHeader>
+        <MudText Typo="Typo.h6">Navigation</MudText>
+    </MudDrawerHeader>
+    
+    <MudNavMenu>
+        <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
+        <MudNavLink Href="posts" Icon="@Icons.Material.Filled.Article">Posts</MudNavLink>
+        <MudNavLink Href="categories" Icon="@Icons.Material.Filled.Category">Categories</MudNavLink>
+        <MudNavLink Href="tags" Icon="@Icons.Material.Filled.Tag">Tags</MudNavLink>
+        <MudNavLink Href="apps" Icon="@Icons.Material.Filled.Apps">Apps</MudNavLink>
+        
+        <MudListItem T="bool">
+            <MudSwitch T="bool" @bind-Checked="@isDarkTheme" Color="Color.Success" Class="theme-switch">
+                <ChildContent>
+                    @if (isDarkTheme)
+                    {
+                        <MudIcon Icon="@Icons.Material.Filled.DarkMode" />
+                        <span class="ml-2">Dark Mode</span>
+                    }
+                    else
+                    {
+                        <MudIcon Icon="@Icons.Material.Filled.LightMode" />
+                        <span class="ml-2">Light Mode</span>
+                    }
+                </ChildContent>
+            </MudSwitch>
+        </MudListItem>
+    </MudNavMenu>
+</MudDrawer>

@@ -16,6 +16,24 @@ namespace Blazor.Pages.Posts
 
         public bool Error = false;
 
+        [Inject] 
+        private NavigationManager NavigationManager { get; set; } = default!;
+
+        private void NavigateToTag(int tagId)
+        {
+            NavigationManager.NavigateTo($"/tag/{tagId}");
+        }
+        
+        private void NavigateToPosts()
+        {
+            NavigationManager.NavigateTo("/posts");
+        }
+        
+        private void NavigateToHome()
+        {
+            NavigationManager.NavigateTo("/");
+        }
+
         protected override async Task OnInitializedAsync()
         {
             try
