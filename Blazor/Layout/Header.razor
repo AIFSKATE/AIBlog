@@ -1,38 +1,16 @@
-﻿<!-- Header.razor -->
-<header>
-    <nav class="navbar">
-        <div class="container">
-            <div class="navbar-header header-logo">
-                <NavLink class="menu-item" href="/" Match="NavLinkMatch.All">
-                    AIBlog
-                </NavLink>
-            </div>
-            <div class="menu navbar-right">
-                <NavLink class="menu-item" href="posts">Posts</NavLink>
-                @* <NavLink class="menu-item" href="posts" @onclick="@(async () => await Utils.RenderPage("posts"))">Posts</NavLink> *@
-                <NavLink class="menu-item" href="categories">Categories</NavLink>
-                <NavLink class="menu-item" href="tags">Tags</NavLink>
-                <NavLink class="menu-item apps" href="apps">Apps</NavLink>
-                <input id="switch_default" type="checkbox" class="switch_default" @onchange="SwitchTheme" checked="@(currentTheme == "Dark")" />
-                <label for="switch_default" class="toggleBtn"></label>
-            </div>
-        </div>
-    </nav>
-    <nav class="navbar-mobile">
-        <div class="container">
-            <div class="navbar-header">
-                <div>
-                    <NavLink class="menu-item" href="" Match="NavLinkMatch.All">AIBlog</NavLink>
-                    <NavLink @onclick="SwitchTheme">&nbsp;·&nbsp;@currentTheme</NavLink>
-                </div>
-                <div class="menu-toggle" @onclick="ToggleNavMenu">&#9776; Menu</div>
-            </div>
-            <div class="menu @NavMenuCssClass">
-                <NavLink class="menu-item" href="posts">Posts</NavLink>
-                <NavLink class="menu-item" href="categories">Categories</NavLink>
-                <NavLink class="menu-item" href="tags">Tags</NavLink>
-                <NavLink class="menu-item apps" href="apps">Apps</NavLink>
-            </div>
-        </div>
-    </nav>
-</header>
+﻿@* Header.razor *@
+<MudAppBar Elevation="1" Color="Color.Surface">
+    @* 左侧 Logo *@
+    <MudLink Href="/" Underline="Underline.None" Color="Color.Inherit" Typo="Typo.h5" Class="fw-bold">
+        AIBlog
+    </MudLink>
+
+    @* 占据中间可用空间，将后面的链接推到右边 *@
+    <MudSpacer />
+
+    @* 右侧导航链接，添加了一些左右边距 (mx-3) 保持间距 *@
+    <MudLink Href="posts" Underline="Underline.Hover" Color="Color.Inherit" Class="mx-3">Posts</MudLink>
+    <MudLink Href="categories" Underline="Underline.Hover" Color="Color.Inherit" Class="mx-3">Categories</MudLink>
+    <MudLink Href="tags" Underline="Underline.Hover" Color="Color.Inherit" Class="mx-3">Tags</MudLink>
+    <MudLink Href="apps" Underline="Underline.Hover" Color="Color.Inherit" Class="mx-3">Apps</MudLink>
+</MudAppBar>

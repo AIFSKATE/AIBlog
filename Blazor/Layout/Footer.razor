@@ -1,8 +1,9 @@
-﻿<!-- Footer.razor -->
-<footer id="footer" class="footer">
-    <div class="copyright">
-        <span>
-            Powered by <a target="_blank" href="http://dot.net">.NET 8</a> and <a href="http://blazor.net/">Blazor</a>
-        </span>
-    </div>
+﻿@* Footer.razor *@
+<footer class="d-flex justify-center align-center py-4 mt-auto">
+    <MudText Typo="Typo.body2" Color="Color.Default">
+        Powered by
+        <MudLink Href="http://dot.net" Target="_blank" Underline="Underline.Hover" Color="Color.Primary">.NET 8</MudLink>
+        and
+        <MudLink Href="http://blazor.net/" Target="_blank" Underline="Underline.Hover" Color="Color.Primary">Blazor</MudLink>
+    </MudText>
 </footer>

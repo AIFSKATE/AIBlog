@@ -1,32 +1,46 @@
 ﻿@page "/"
 
-<div class="main">
-    <div class="container">
-        <div class="intro">
-            <div class="avatar">
-                <a href="javascript:;"><img src="https://avatars.githubusercontent.com/u/68407466?s=96&v=4"></a>
-            </div>
-            <div class="nickname">AIBlog</div>
-            <div class="description">
-                <p>
-                    学无止境
-                    <br>Knowledge has no limit
-                </p>
-            </div>
-            <div class="links">
-                <NavLink class="link-item" title="Posts" href="posts">
-                    <i class="iconfont iconread"></i>
-                </NavLink>
-                <NavLink target="_blank" class="link-item" title="Notes">
-                    <i class="iconfont iconnotes"></i>
-                </NavLink>
-                <NavLink class="link-item" title="Manage" href="auth">
-                    <i class="iconfont iconcode"></i>
-                </NavLink>
-                <NavLink target="_blank" class="link-item" title="Github" href="https://github.com/AIFSKATE">
-                    <i class="iconfont icongithub"></i>
-                </NavLink>
-            </div>
-        </div>
+@* 使用 d-flex flex-column 实现垂直排布 
+   align-center 和 justify-center 实现水平和垂直居中 
+   min-height: 60vh 确保内容在视觉上处于页面的正中间偏上位置 
+*@
+<MudContainer Class="d-flex flex-column align-center justify-center" Style="min-height: 60vh;">
+
+    @* 头像区：使用 MudAvatar，加了一点阴影 (mud-elevation-2) 让它更有立体感 *@
+
+    <MudAvatar Style="width: 100px; height: 100px;"
+               Class="mb-4 mud-elevation-2">
+        <MudImage Src="https://avatars.githubusercontent.com/u/68407466?s=96&v=4"></MudImage>
+    </MudAvatar>
+
+    @* 昵称 *@
+    <MudText Typo="Typo.h4" Class="mb-2" Style="font-weight: bold;">
+        AIBlog
+    </MudText>
+
+    @* 描述信息：使用 Align="Align.Center" 确保内部文字换行时也是居中的 *@
+    <MudText Typo="Typo.body1" Align="Align.Center" Class="mb-6">
+        学无止境<br />
+        Knowledge has no limit
+    </MudText>
+
+    @* 底部图标链接区：使用 gap-4 保持按钮之间的间距 *@
+    <div class="d-flex gap-4">
+        <MudTooltip Text="Posts">
+            <MudIconButton Href="posts" Icon="@Icons.Material.Filled.MenuBook" Color="Color.Default" />
+        </MudTooltip>
+
+        <MudTooltip Text="Notes">
+            <MudIconButton Target="_blank" Href="javascript:;" Icon="@Icons.Material.Filled.EditNote" Color="Color.Default" />
+        </MudTooltip>
+
+        <MudTooltip Text="Manage">
+            <MudIconButton Href="auth" Icon="@Icons.Material.Filled.Code" Color="Color.Default" />
+        </MudTooltip>
+
+        <MudTooltip Text="Github">
+            <MudIconButton Target="_blank" Href="https://github.com/AIFSKATE" Icon="@Icons.Custom.Brands.GitHub" Color="Color.Default" />
+        </MudTooltip>
     </div>
-</div>
+
+</MudContainer>

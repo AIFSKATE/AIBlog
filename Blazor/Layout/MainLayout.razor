@@ -1,8 +1,24 @@
 ﻿@inherits LayoutComponentBase
-<div class="wrapper">
-    <Header/>
-    <main class="content">
-        @Body
-    </main>
-    <Footer/>
-</div>
+
+@* 引入 MudBlazor 必需的基础组件 *@
+<MudThemeProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+<MudPopoverProvider />
+
+<MudLayout>
+    <Header />
+
+    <MudMainContent>
+        @* 核心：最小高度 = 屏幕高度 - Header高度。利用 flex 布局将 Footer 始终推到底部 *@
+        <div class="d-flex flex-column" style="min-height: calc(100vh - var(--mud-appbar-height));">
+
+            @* flex-grow-1 会占据所有剩余空间，把 Footer 往下挤 *@
+            <div class="flex-grow-1 pa-4">
+                @Body
+            </div>
+
+            <Footer />
+        </div>
+    </MudMainContent>
+</MudLayout>
