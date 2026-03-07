@@ -1,6 +1,7 @@
 ﻿using Domain.Post;
 using Mapper.DTO;
 using Microsoft.AspNetCore.Components;
+using MudBlazor;
 using System.Net.Http.Json;
 
 namespace Blazor.Pages.Admin
@@ -11,36 +12,30 @@ namespace Blazor.Pages.Admin
         public int? Id { get; set; }
 
         private string OriginalHtmlText = string.Empty;
+
+        private bool IsProcessing = false;
         private string InputText
         {
             get => OriginalHtmlText;
             set
             {
                 OriginalHtmlText = value;
+                Console.WriteLine(OriginalHtmlText);
                 HtmlText = Markdig.Markdown.ToHtml(value);
             }
         }
         private string HtmlText = string.Empty;
 
-        List<TagDTO> AllTags = new();
-        List<CategoryDTO> AllCategories = new();
+        List<TagDTO> AllTags = [];
+        List<CategoryDTO> AllCategories = [];
 
-        List<TagDTO> PostTags = new();
+        List<TagDTO> PostTags = [];
         int PostCategory = 0;
 
-        List<string> TagNames = new();
-        List<int> TagsSelected = new();
-        List<string> CtgryNames = new();
-        List<int> CtgriesSelected = new();
+        IReadOnlyList<int> TagsSelected = new List<int>();
 
         PostDTO PostDTO = new();
         private string PostTitle { get; set; } = string.Empty;
-
-        // --- 弹窗控制状态 ---
-        private bool ShowModal = false;
-        private bool IsAddingTag = true;
-        private string NewItemName = string.Empty;
-        private string NewCategoryDesc = string.Empty;
 
         protected override async Task OnInitializedAsync()
         {
@@ -52,132 +47,101 @@ namespace Blazor.Pages.Admin
             PostCategory = PostDTO.CategoryId ?? -1;
             PostTags = PostDTO.Tags ?? new List<TagDTO>();
             PostTitle = PostDTO.Title ?? string.Empty;
+            IsProcessing = false;
 
             await ReloadTagsAsync();
             await ReloadCategoriesAsync();
         }
 
-        // --- 弹窗相关方法 ---
-        private void OpenTagModal()
-        {
-            IsAddingTag = true;
-            NewItemName = string.Empty;
-            ShowModal = true;
-        }
-
-        private void OpenCategoryModal()
-        {
-            IsAddingTag = false;
-            NewItemName = string.Empty;
-            NewCategoryDesc = string.Empty;
-            ShowModal = true;
-        }
-
-        private void CloseModal()
-        {
-            ShowModal = false;
-        }
 
 
-        private void SetCategory(int index)
-        {
-            // 将所有选中状态重置为 0
-            for (int i = 0; i < CtgriesSelected.Count; i++)
-            {
-                CtgriesSelected[i] = 0;
-            }
-            // 将当前点击的设为 1
-            CtgriesSelected[index] = 1;
-        }
-
-        private async Task ConfirmAdd()
-        {
-            if (string.IsNullOrWhiteSpace(NewItemName)) return;
-
-            if (IsAddingTag)
-            {
-                // Tag Controller 期望 [FromBody] string，直接传值
-                var res = await HttpClient.PostAsJsonAsync("Tag/AddTag", NewItemName);
-                if (res.IsSuccessStatusCode)
-                {
-                    await ReloadTagsAsync();
-                }
-            }
-            else
-            {
-                // Category Controller 期望 CategoryDTO
-                var newCat = new CategoryDTO { CategoryName = NewItemName, Description = NewCategoryDesc };
-                var res = await HttpClient.PostAsJsonAsync("Category/AddCategory", newCat);
-                if (res.IsSuccessStatusCode)
-                {
-                    await ReloadCategoriesAsync();
-                }
-            }
-
-            CloseModal();
-        }
-
-        // --- 抽离的刷新数据方法（保证不丢状态） ---
         private async Task ReloadTagsAsync()
         {
-            // 记住当前选中的 Tag ID
-            var oldSelectedTagIds = AllTags.Where((t, i) => TagsSelected.Count > i && TagsSelected[i] == 1).Select(t => t.Id).ToList();
-            if (PostTags.Any()) oldSelectedTagIds.AddRange(PostTags.Select(p => p.Id));
+            AllTags = await HttpClient.GetFromJsonAsync<List<TagDTO>>("Tag/QueryAllTags") ?? [];
 
-            AllTags = await HttpClient.GetFromJsonAsync<List<TagDTO>>("Tag/QueryAllTags") ?? new();
-            TagNames = AllTags.Select(t => t.TagName).ToList();
+            TagsSelected = PostTags.Select(t => t.Id).ToList();
+        }
 
-            // 恢复选中状态
-            TagsSelected = AllTags.Select(t => oldSelectedTagIds.Contains(t.Id) ? 1 : 0).ToList();
+        private void OnTagsChanged(IEnumerable<int> selectedIds)
+        {
+            // 【前 -> 后】同步：用户在界面点选后，直接更新 TagsSelected
+            TagsSelected = selectedIds.ToList();
+
+            // 同时更新 PostTags 列表，确保提交到后端的 DTO 是完整的
+            PostTags = AllTags.Where(t => TagsSelected.Contains(t.Id)).ToList();
         }
 
         private async Task ReloadCategoriesAsync()
         {
-            // 记住当前选中的 Category ID
-            int oldSelectedCategoryId = PostCategory;
-            var index = CtgriesSelected.IndexOf(1);
-            if (index >= 0 && index < AllCategories.Count)
-            {
-                oldSelectedCategoryId = AllCategories[index].Id;
-            }
-
             AllCategories = await HttpClient.GetFromJsonAsync<List<CategoryDTO>>("Category/QueryCategories") ?? new();
-            CtgryNames = AllCategories.Select(c => c.CategoryName).ToList();
-
-            // 恢复选中状态
-            CtgriesSelected = AllCategories.Select(c => c.Id == oldSelectedCategoryId ? 1 : 0).ToList();
         }
 
-        // --- 原有提交逻辑 ---
-        private void OnSubmit()
+        private void OnCategoryChanged(int selectedId)
         {
-            // ... (保持你原有的 OnSubmit 不变)
-            Console.WriteLine("成功提交");
-            PostDTO.Title = PostTitle == string.Empty ? DateTime.Now.ToShortDateString() : PostTitle;
-            PostDTO.Markdown = InputText;
-            int index = CtgriesSelected.IndexOf(1);
-            if (index < 0)
+            PostCategory = selectedId;
+        }
+
+        private async Task OnSubmit()
+        {
+            // --- 1. 数据合法性校验 ---
+            if (string.IsNullOrWhiteSpace(PostTitle))
             {
-                PostDTO.CategoryId = null;
+                // 弹出错误提示，Severity.Error 会显示红色的警告框
+                Snackbar.Add("文章标题不能为空，请输入标题后重试。", Severity.Error);
+                return; // 关键：直接拦截，不执行后面的提交代码
             }
-            else
+
+            if (string.IsNullOrWhiteSpace(InputText))
             {
-                PostDTO.CategoryId = AllCategories[index].Id;
+                Snackbar.Add("文章为空，请重试。", Severity.Error);
+                return;
             }
-            PostDTO.Tags = AllTags.Where((t, i) => TagsSelected[i] == 1).ToList();
+            //禁用按钮，防止重复提交
+            IsProcessing = true;
+            // --- 2. 同步基本信息 ---
+            // 既然通过了校验，直接赋值即可
+            PostDTO.Title = PostTitle;
+            // 如果 PostCategory 是 -1 或 0（代表未选择），则设为 null
+            PostDTO.CategoryId = PostCategory > 0 ? PostCategory : null;
+
+            // 3. 处理标签
+            // 因为你在 OnTagsChanged 里已经实时同步了 PostTags，这里直接赋值即可
+            PostDTO.Tags = PostTags;
+
+            HttpResponseMessage response;
+            // 4. 调用接口
             if (Id.HasValue)
             {
-                HttpClient.PutAsJsonAsync<PostDTO>("Post/UpdatePost", PostDTO);
+                // 编辑模式：更新文章
+                response = await HttpClient.PutAsJsonAsync<PostDTO>("Post/UpdatePost", PostDTO);
+
             }
             else
             {
-                HttpClient.PostAsJsonAsync("Post/CreatePost", new PostCreation()
+                // 新建模式：创建文章
+                response = await HttpClient.PostAsJsonAsync("Post/CreatePost", new PostCreation()
                 {
-                    Title = PostDTO.Title ?? string.Empty,
-                    Markdown = PostDTO.Markdown ?? string.Empty,
-                    TagIDs = PostDTO.Tags?.Select(t => t.Id).ToList() ?? new List<int>(),
-                    CategoryId = PostDTO.CategoryId,
+                    Title = PostTitle,
+                    Markdown = InputText,
+                    TagIDs = PostTags.Select(t => t.Id).ToList(), // 提取 ID 列表
+                    CategoryId = PostCategory,
                 });
+            }
+            // 无论成功与否，都要重新启用按钮
+            IsProcessing = false;
+            // --- 处理结果反馈 ---
+            if (response.IsSuccessStatusCode)
+            {
+                // 成功：显示绿色提示
+                Snackbar.Add(Id.HasValue ? "文章更新成功！" : "文章发布成功！", Severity.Success);
+                await Utils.NavigateTo("/posts");
+            }
+            else
+            {
+                var errorMsg = await response.Content.ReadAsStringAsync();
+
+                Snackbar.Add($"操作失败：状态码 {response.StatusCode}", Severity.Error);
+                Console.WriteLine($"后端报错详情: {errorMsg}");
             }
         }
     }

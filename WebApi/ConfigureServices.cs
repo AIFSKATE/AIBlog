@@ -1,16 +1,14 @@
-﻿using EFCore;
+﻿using Domain.Account;
+using EFCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using WebApi.Identity;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Domain.Account;
 using NLog.Web;
-using AutoMapper;
-using Mapper.Profiles;
 using System.Reflection;
+using System.Text;
+using WebApi.Identity;
 
 namespace WebApi
 {
@@ -93,6 +91,10 @@ namespace WebApi
         internal static void ConfigureNLog(WebApplicationBuilder builder)
         {
             builder.Logging.ClearProviders();
+            if (builder.Environment.IsDevelopment())
+            {
+                builder.Logging.AddConsole();
+            }
             builder.Logging.AddNLog("Config/NLog.config");
             builder.Host.UseNLog();
         }

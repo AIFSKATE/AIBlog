@@ -37,7 +37,7 @@ namespace Blazor.Pages.Posts
 
         private async Task RenderPage(int currentPage)
         {
-            PostData = await HttpClient.GetFromJsonAsync<QueryPostsDto>($"Category/QueryPostsUnderCategory?Page={currentPage}&Limit={Limit}&categoryId={Id}");
+            PostData = await HttpClient.GetFromJsonAsync<QueryPostsDto>($"Tag/QueryPostsUnderTag?Page={currentPage}&Limit={Limit}&tagId={Id}");
             TagName = PostData.Info ?? string.Empty;
             TotalPage = (int)Math.Ceiling(PostData.Count / (double)Limit);
         }

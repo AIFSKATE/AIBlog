@@ -26,20 +26,16 @@
 
     @* 底部图标链接区：使用 gap-4 保持按钮之间的间距 *@
     <div class="d-flex gap-4">
-        <MudTooltip Text="Posts">
+        @* <MudTooltip Text="Posts">
             <MudIconButton Href="posts" Icon="@Icons.Material.Filled.MenuBook" Color="Color.Default" />
-        </MudTooltip>
+        </MudTooltip> *@
 
-        <MudTooltip Text="Notes">
-            <MudIconButton Target="_blank" Href="javascript:;" Icon="@Icons.Material.Filled.EditNote" Color="Color.Default" />
-        </MudTooltip>
-
-        <MudTooltip Text="Manage">
-            <MudIconButton Href="auth" Icon="@Icons.Material.Filled.Code" Color="Color.Default" />
+        <MudTooltip Text="Mail">
+            <MudIconButton Target="_blank" Href="mailto:AIFSKATE@outlook.com" Icon="@Icons.Material.Outlined.MailOutline" />
         </MudTooltip>
 
         <MudTooltip Text="Github">
-            <MudIconButton Target="_blank" Href="https://github.com/AIFSKATE" Icon="@Icons.Custom.Brands.GitHub" Color="Color.Default" />
+            <MudIconButton Target="_blank" Href="https://github.com/AIFSKATE" Icon="@Icons.Custom.Brands.GitHub"/>
         </MudTooltip>
     </div>
 

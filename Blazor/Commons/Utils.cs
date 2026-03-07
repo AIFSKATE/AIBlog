@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using System.Threading.Tasks;
 
 namespace Blazor.Commons
 {
@@ -63,9 +62,12 @@ namespace Blazor.Commons
         /// 跳转指定URL
         /// </summary>
         /// <param name="uri"></param>
-        /// <param name="forceLoad">true，绕过路由刷新页面</param>
+        /// <param name="forceLoad">
+        /// true:强制刷新刷新页面
+        /// false:浏览器不刷新
+        /// Blazor掐指一算,发现新页面对应的组件是B，于是卸载A，挂载B。</param>
         /// <returns></returns>
-        public async Task NavigateTo(string url, bool forceLoad = true)
+        public async Task NavigateTo(string url, bool forceLoad = false)
         {
             _navigationManager.NavigateTo(url, forceLoad);
 
