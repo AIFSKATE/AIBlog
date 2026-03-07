@@ -12,34 +12,34 @@
         @* 头部信息 *@
         <div class="mb-10 text-center">
             <MudText Typo="Typo.h3" Class="mb-4 fw-bold">@PostDto.Title</MudText>
-            
+
             <div class="d-flex justify-center align-center gap-4 flex-wrap text-muted">
-                <MudText Typo="Typo.caption" Class="d-flex align-center">
-                    <MudIcon Icon="@Icons.Material.Filled.Person" Size="Size.Small" Class="mr-1"/> AIFSKATE
+                <MudText Class="d-flex align-center">
+                    <MudIcon Icon="@Icons.Material.Outlined.Person" Class="mr-1" /> AIFSKATE
                 </MudText>
-                <MudText Typo="Typo.caption" Class="d-flex align-center">
-                    <MudIcon Icon="@Icons.Material.Filled.CalendarToday" Size="Size.Small" Class="mr-1"/> @PostDto.CreationTime.ToString("yyyy-MM-dd")
+                <MudText Class="d-flex align-center">
+                    <MudIcon Icon="@Icons.Material.Outlined.CalendarToday" Class="mr-1" /> @PostDto.CreationTime.ToString("yyyy-MM-dd")
                 </MudText>
-                <MudLink Href="@($"/category/{PostDto.CategoryId}/")" Typo="Typo.caption" Color="Color.Primary" Class="d-flex align-center">
-                    <MudIcon Icon="@Icons.Material.Filled.Folder" Size="Size.Small" Class="mr-1"/> @(PostDto.CategoryName ?? "无")
+                <MudLink Color="Color.Default"  Href="@($"/category/{PostDto.CategoryId}/")" Class="d-flex align-center">
+                    <MudIcon Icon="@Icons.Material.Outlined.Folder" Class="mr-1" /> @(PostDto.CategoryName ?? "无")
                 </MudLink>
             </div>
         </div>
 
         @* 正文区域 *@
-        <article class="mb-8" style="overflow-wrap: break-word;">
+        <MudText class="mb-8" style="overflow-wrap: break-word;">
             @((MarkupString)Markdig.Markdown.ToHtml(PostDto.Markdown))
-        </article>
+        </MudText>
 
         @* 标签区域：使用 MudChip *@
         @if (PostDto.Tags.Any())
         {
             <div class="d-flex align-center gap-2 mb-8">
-                <MudIcon Icon="@Icons.Material.Filled.LocalOffer" Size="Size.Small" Color="Color.Secondary" />
-                <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mr-2">Tags:</MudText>
+                <MudIcon Icon="@Icons.Material.Outlined.LocalOffer" />
+                <MudText Class="mr-2">Tags:</MudText>
                 @foreach (var tag in PostDto.Tags)
                 {
-                    <MudChip T="string" Href="@($"/tag/{tag.Id}")" Size="Size.Small" Color="Color.Primary" Variant="Variant.Outlined">
+                    <MudChip T="string" Href="@($"/tag/{tag.Id}")" Variant="Variant.Outlined">
                         @tag.TagName
                     </MudChip>
                 }
@@ -47,13 +47,13 @@
         }
 
         @* 版权声明区域 *@
-        <MudAlert Severity="Severity.Info" Variant="Variant.Filled" Class="mt-4">
-            <MudText Typo="Typo.body2">
-                <strong>Author:</strong> AIFSKATE <br/>
-                <strong>License:</strong> 本文采用 
+        <MudAlert Severity="Severity.Normal" Variant="Variant.Outlined" Class="mt-4">
+            <MudText>
+                <strong>Author:</strong> AIFSKATE <br />
+                <strong>License:</strong> 本文采用
                 <MudLink Href="http://creativecommons.org/licenses/by-nc-nd/4.0/" Target="_blank" Color="Color.Inherit" Underline="Underline.Always">
                     知识共享 署名-非商业性使用-禁止演绎(CC BY-NC-ND)国际许可协议
-                </MudLink> 
+                </MudLink>
                 进行许可。
             </MudText>
         </MudAlert>

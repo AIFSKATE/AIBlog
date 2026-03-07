@@ -10,7 +10,7 @@
     {
         @* 替换了你原有的 <Loading /> *@
         <div class="d-flex justify-center my-16">
-            <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+            <MudProgressCircular Color="Color.Default" Indeterminate="true" />
         </div>
     }
     else if (!PostTags.Any())
@@ -31,7 +31,6 @@
                 *@
                 <MudButton Href="@($"/tag/{item.Id}")"
                            Variant="Variant.Outlined"
-                           Color="Color.Primary"
                            Class="rounded-pill px-4 text-transform-none">
                     @item.TagName
                 </MudButton>

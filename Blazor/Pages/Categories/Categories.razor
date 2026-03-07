@@ -25,7 +25,7 @@
                 @* 这里的卡片排版稍微宽一点，手机 xs=12，平板和桌面端均为 sm=6（一行两个） *@
                 <MudItem xs="12" sm="6">
                     <MudPaper Elevation="1" Class="pa-6 h-100 d-flex flex-column justify-center align-center">
-                        <MudLink Href="@($"/category/{item.Id}")" Typo="Typo.h6" Color="Color.Primary" Underline="Underline.Hover" Class="d-flex align-center mb-2">
+                        <MudLink Href="@($"/category/{item.Id}")" Typo="Typo.h6" Color="Color.Default" Underline="Underline.Hover" Class="d-flex align-center mb-2">
                             @* 引入了对应的原生 MudIcon *@
                             <MudIcon Icon="@Icons.Material.Filled.Code" Size="Size.Small" Class="mr-2" />
                             @item.CategoryName

@@ -1,5 +1,5 @@
 ﻿@* Header.razor *@
-<MudAppBar Elevation="1" Color="Color.Surface">
+<MudAppBar Elevation="0" Color="Color.Transparent">
     @* 左侧 Logo *@
     <MudLink Href="/" Underline="Underline.None" Color="Color.Inherit" Typo="Typo.h5" Class="fw-bold">
         AIBlog
@@ -9,9 +9,9 @@
     <MudSpacer />
 
     @* 右侧导航链接，添加了一些左右边距 (mx-4) 保持间距 *@
-    <MudLink Href="auth" Underline="Underline.Hover" Color="Color.Inherit" Class="mx-4">Manage</MudLink>
-    <MudLink Href="posts" Underline="Underline.Hover" Color="Color.Inherit" Class="mx-4">Posts</MudLink>
-    <MudLink Href="categories" Underline="Underline.Hover" Color="Color.Inherit" Class="mx-4">Categories</MudLink>
-    <MudLink Href="tags" Underline="Underline.Hover" Color="Color.Inherit" Class="mx-4">Tags</MudLink>
-    <MudLink Href="apps" Underline="Underline.Hover" Color="Color.Inherit" Class="mx-4">Apps</MudLink>
+    <MudLink Href="auth" Underline="Underline.Hover" Typo="Typo.body1" Color="Color.Default" Class="mx-4">Manage</MudLink>
+    <MudLink Href="posts" Underline="Underline.Hover" Typo="Typo.body1" Color="Color.Default" Class="mx-4">Posts</MudLink>
+    <MudLink Href="categories" Underline="Underline.Hover" Typo="Typo.body1" Color="Color.Default" Class="mx-4">Categories</MudLink>
+    <MudLink Href="tags" Underline="Underline.Hover" Typo="Typo.body1" Color="Color.Default" Class="mx-4">Tags</MudLink>
+    <MudLink Href="apps" Underline="Underline.Hover" Typo="Typo.body1" Color="Color.Default" Class="mx-4">Apps</MudLink>
 </MudAppBar>
