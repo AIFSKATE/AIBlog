@@ -1,0 +1,49 @@
+﻿<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icon" Color="@IconColor" Class="mr-3 mb-n1" />
+            @Title
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudText Class="pa-5">@ContentText</MudText>
+    </DialogContent>
+    <DialogActions>
+        @* 内部包裹 HandleCancel，确保弹窗能关闭 *@
+        <MudButton Variant="Variant.Outlined" OnClick="HandleCancel">@CancelText</MudButton>
+        <MudButton Variant="Variant.Outlined" Color="@Color" OnClick="HandleConfirm">@ConfirmText</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public string Title { get; set; } = "确认操作";
+    [Parameter] public string ContentText { get; set; } = "你确定要执行此操作吗？";
+    [Parameter] public string ConfirmText { get; set; } = "确定";
+    [Parameter] public string CancelText { get; set; } = "取消";
+    [Parameter] public Color Color { get; set; } = Color.Default;
+    [Parameter] public Color IconColor { get; set; } = Color.Default;
+    [Parameter] public string Icon { get; set; } = Icons.Material.Outlined.QuestionMark;
+
+    // 使用 Func<Task> 替代 Action，这样可以支持异步的删除操作
+    [Parameter] public Func<MouseEventArgs, Task> OnConfirm { get; set; }
+    [Parameter] public Func<MouseEventArgs, Task> OnCancel { get; set; }
+
+    private async Task HandleConfirm(MouseEventArgs e)
+    {
+        if (OnConfirm != null)
+        {
+            await OnConfirm.Invoke(e); // 执行父组件传进来的逻辑
+        }
+        MudDialog.Close(DialogResult.Ok(true)); // 逻辑跑完，关闭弹窗
+    }
+
+    private async Task HandleCancel(MouseEventArgs e)
+    {
+        if (OnCancel != null)
+        {
+            await OnCancel.Invoke(e);
+        }
+        MudDialog.Cancel(); // 点击取消，直接撤销弹窗
+    }
+}

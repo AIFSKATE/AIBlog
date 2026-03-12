@@ -1,89 +1,117 @@
-﻿using Domain.Post;
+﻿using Blazor.Dialog;
 using Mapper.DTO;
-using Microsoft.AspNetCore.Components.Web;
+using MudBlazor;
 using System.Net.Http.Json;
 
 namespace Blazor.Pages.Admin
 {
     public partial class AdminFriendLink
     {
-        List<FriendLinkDTO> FriendLinks;
-        bool Open { get; set; } = false;
-        FriendLinkDTO UploadData = new();
-        public Action<MouseEventArgs> OnConfirm { get; set; }
-        public Action<MouseEventArgs> OnCancel { get; set; }
-        bool ShowMessage { get; set; } = false;
-        string Message { get; set; } = "发生错误";
-
+        private List<FriendLinkDTO> FriendLinks;
 
         protected override async Task OnInitializedAsync()
         {
-            await base.OnInitializedAsync();
-            OnCancel = Close;
+            await LoadDataAsync();
+        }
+
+        private string EnsureAbsoluteUrl(string url)
+        {
+            if (string.IsNullOrEmpty(url)) return "#";
+            return url.StartsWith("http", StringComparison.OrdinalIgnoreCase) ? url : $"https://{url}";
+        }
+
+        private async Task LoadDataAsync()
+        {
+            // 对接 [HttpGet] QueryFriendLinks
             FriendLinks = await HttpClient.GetFromJsonAsync<List<FriendLinkDTO>>("FriendLink/QueryFriendLinks");
         }
 
-
-        /// <summary>
-        /// 删除分类
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        protected async Task DeleteFriendlinkAsync(int id)
+        protected async Task OpenDeleteDialog(int id)
         {
-            // 弹窗确认
-            bool confirmed = await Utils.InvokeAsync<bool>("confirm", "\n💥💢请问是否确定删除💢💥");
-
-            if (confirmed)
+            var parameters = new DialogParameters<GenericConfirmDialog>
             {
-                var response = await HttpClient.DeleteAsync($"DeleteFriendLink?friendLinkId={id}");
+                { x => x.Title, "确认删除" },
+                { x => x.ContentText, "确定要删除该友链吗？" },
+                { x => x.Color, Color.Error },
+                { x => x.Icon, Icons.Material.Outlined.DeleteForever },
+                { x => x.OnConfirm, async (e) => await ExecuteDelete(id) }
+            };
 
-                if (response.IsSuccessStatusCode)
-                {
-                    FriendLinks = await HttpClient.GetFromJsonAsync<List<FriendLinkDTO>>("FriendLink/QueryFriendLinks");
-                    await InvokeAsync(StateHasChanged);
-                }
-            }
+            var options = new DialogOptions
+            {
+                CloseOnEscapeKey = true,
+                MaxWidth = MaxWidth.Small,
+            };
+            await DialogService.ShowAsync<GenericConfirmDialog>("Delete", parameters, options);
         }
 
-        protected async void Close(MouseEventArgs e)
+        private async Task ExecuteDelete(int id)
         {
-            Open = false;
-        }
-
-        protected async Task UpdateFriendlink(FriendLinkDTO tagDTO)
-        {
-            Open = true;
-            UploadData = tagDTO;
-            OnConfirm = UpdateSubmit;
-        }
-
-        private async void UpdateSubmit(MouseEventArgs e)
-        {
-            var response = await HttpClient.PutAsJsonAsync<FriendLinkDTO>("FriendLink/UpdateFriendLink", UploadData);
+            // 对接 [HttpDelete] DeleteFriendLink?friendLinkId=xx
+            var response = await HttpClient.DeleteAsync($"FriendLink/DeleteFriendLink?friendLinkId={id}");
             if (response.IsSuccessStatusCode)
             {
+                Snackbar.Add("友链已删除", Severity.Success);
+                await LoadDataAsync();
+                StateHasChanged();
             }
-            FriendLinks = await HttpClient.GetFromJsonAsync<List<FriendLinkDTO>>("FriendLink/QueryFriendLinks");
-            Close(e);
-            await InvokeAsync(StateHasChanged);
+            else
+            {
+                Snackbar.Add("删除失败", Severity.Error);
+            }
         }
 
-        protected async Task AddFriendlink()
+        protected async Task OpenEditDialog(FriendLinkDTO item = null)
         {
-            Open = true;
-            OnConfirm = AddSubmit;
+            var isEdit = item != null;
+            var model = isEdit ? new FriendLinkDTO { Id = item.Id, Title = item.Title, LinkUrl = item.LinkUrl } : new FriendLinkDTO();
+
+            var parameters = new DialogParameters<FriendLinkEditDialog>
+            {
+                { x => x.Title, isEdit ? "修改友链信息" : "添加新友链" },
+                { x => x.Model, model },
+                { x => x.Color, Color.Primary }
+            };
+
+            var options = new DialogOptions
+            {
+                CloseOnEscapeKey = true,
+                FullWidth = true,
+            };
+            var dialog = await DialogService.ShowAsync<FriendLinkEditDialog>(isEdit ? "Edit" : "Add", parameters, options);
+            var result = await dialog.Result;
+
+            if (!result.Canceled && result.Data is FriendLinkDTO updatedModel)
+            {
+                await ExecuteSubmit(updatedModel, isEdit);
+            }
         }
 
-        private async void AddSubmit(MouseEventArgs e)
+        private async Task ExecuteSubmit(FriendLinkDTO model, bool isEdit)
         {
-            var response = await HttpClient.PostAsJsonAsync("FriendLink/AddLink", new FriendLinkCreation(UploadData.Title, UploadData.LinkUrl));
+            HttpResponseMessage response;
+            if (isEdit)
+            {
+                // 对接 [HttpPut] UpdateFriendLink
+                response = await HttpClient.PutAsJsonAsync("FriendLink/UpdateFriendLink", model);
+            }
+            else
+            {
+                // 对接 [HttpPost] AddLink (使用后端期望的 FriendLinkCreation 结构)
+                var creationDto = new { Title = model.Title, LinkUrl = model.LinkUrl };
+                response = await HttpClient.PostAsJsonAsync("FriendLink/AddLink", creationDto);
+            }
+
             if (response.IsSuccessStatusCode)
             {
+                Snackbar.Add(isEdit ? "更新成功" : "添加成功", Severity.Success);
+                await LoadDataAsync();
+                StateHasChanged();
             }
-            FriendLinks = await HttpClient.GetFromJsonAsync<List<FriendLinkDTO>>("FriendLink/QueryFriendLinks");
-            Close(e);
-            await InvokeAsync(StateHasChanged);
+            else
+            {
+                Snackbar.Add("操作失败，请检查数据", Severity.Error);
+            }
         }
     }
 }

@@ -1,0 +1,25 @@
+﻿@using Mapper.DTO
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">@Title</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudTextField T="string" Label="站点名称" @bind-Value="Model.Title" Required="true" AutoFocus="true" />
+        <MudTextField T="string" Label="链接地址" @bind-Value="Model.LinkUrl" Required="true" Class="mt-4" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Outlined" OnClick="Cancel">取消</MudButton>
+        <MudButton Variant="Variant.Outlined" Color="@Color" OnClick="Submit">提交</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; }
+    [Parameter] public string Title { get; set; }
+    [Parameter] public Color Color { get; set; }
+    [Parameter] public FriendLinkDTO Model { get; set; } = new();
+
+    private void Submit() => MudDialog.Close(DialogResult.Ok(Model));
+    private void Cancel() => MudDialog.Cancel();
+}

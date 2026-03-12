@@ -34,6 +34,8 @@ namespace Blazor
                 config.SnackbarConfiguration.SnackbarVariant = Variant.Outlined;
 
                 config.SnackbarConfiguration.PreventDuplicates = false;
+
+                config.SnackbarConfiguration.BackgroundBlurred = true;
             });
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(baseAddress) });
             builder.Services.AddSingleton<Utils>();

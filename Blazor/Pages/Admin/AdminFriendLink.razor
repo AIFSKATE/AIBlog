@@ -1,49 +1,95 @@
 ﻿@page "/admin/friendlinks"
 
 <AdminLayout>
-    @if (FriendLinks == null)
-    {
-        <Loading />
-    }
-    else
-    {
-        <div class="post-wrap categories">
-            <h2 class="post-title">-&nbsp;FriendLinks&nbsp;-</h2>
-            @if (FriendLinks.Any())
-            {
-                <div class="categories-card">
-                    @foreach (var item in FriendLinks)
-                    {
-                        <div class="card-item">
-                            <div class="categories">
-                                <NavLink title="❌删除" @onclick="@(async () => await DeleteFriendlinkAsync(item.Id))">❌</NavLink>
-                                <NavLink title="📝编辑" @onclick="@(() => UpdateFriendlink(item))">📝</NavLink>
-                                <NavLink target="_blank" href="@(item.LinkUrl)" title="@(item.LinkUrl)">
-                                    <h3>@item.Title</h3>
-                                </NavLink>
-                            </div>
-                        </div>
-                    }
-                    <div class="card-item">
-                        <div class="categories">
-                            <NavLink><h3 @onclick=@AddFriendlink>📒~~~ 新增分类 ~~~📒</h3></NavLink>
-                        </div>
-                    </div>
-                </div>
-            }
-            else
-            {
-                <ErrorTip />
-            }
-        </div>
+    <MudContainer MaxWidth="MaxWidth.Medium" Class="mt-8 mb-4">
+        <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-8 fw-bold">
+            - FriendLinks Admin -
+        </MudText>
 
-        <Box Open="@Open" OnCancel="OnCancel" OnConfirm="OnConfirm">
-            <div class="box-item">
-                FriendlinkTitle:<input type="text" @bind="@UploadData.Title" @bind:event="oninput" />
+        @if (FriendLinks == null)
+        {
+            <div class="d-flex justify-center my-16">
+                <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
             </div>
-            <div class="box-item">
-                FriendlinkUrl:<input type="text" @bind="@UploadData.LinkUrl" @bind:event="oninput" />
-            </div>
-        </Box>
-    }
+        }
+        else
+        {
+            <MudGrid>
+                @foreach (var item in FriendLinks)
+                {
+                    <MudItem xs="12" sm="6" md="4">
+                        <MudPaper Elevation="0" Class="admin-nav-card relative">
+                            @* 操作按钮 *@
+                            <div class="action-buttons">
+                                <MudIconButton Icon="@Icons.Material.Outlined.Edit" Size="Size.Small" OnClick="@(() => OpenEditDialog(item))" />
+                                <MudIconButton Icon="@Icons.Material.Outlined.Delete" Size="Size.Small" OnClick="@(() => OpenDeleteDialog(item.Id))" />
+                            </div>
+
+                            <MudIcon Icon="@Icons.Material.Outlined.Link" Size="Size.Large" Color="Color.Primary" Class="mb-2" />
+                            
+                            <MudLink Href="@EnsureAbsoluteUrl(item.LinkUrl)" Target="_blank" Typo="Typo.h6" Underline="Underline.None" Color="Color.Primary" Class="fw-bold">
+                                @item.Title
+                            </MudLink>
+                            
+                            <MudText Typo="Typo.caption" Class="mud-text-secondary mt-1 text-truncate" Style="max-width: 100%">
+                                @item.LinkUrl
+                            </MudText>
+                        </MudPaper>
+                    </MudItem>
+                }
+
+                @* 新增按钮卡片：移除 h-100，依靠 CSS 统一高度 *@
+                <MudItem xs="12" sm="6" md="4">
+                    <MudPaper Elevation="0" Class="admin-nav-card" Style="border-style: dashed; cursor: pointer;" @onclick="@(() => OpenEditDialog())">
+                        <MudIcon Icon="@Icons.Material.Filled.Add" Size="Size.Large" Color="Color.Primary" Class="mb-2" />
+                        <MudText Typo="Typo.h6" Class="fw-bold">新增友链</MudText>
+                        @* 占位文本，确保与普通卡片高度一致 *@
+                        <MudText Typo="Typo.caption" Style="visibility: hidden">placeholder</MudText>
+                    </MudPaper>
+                </MudItem>
+            </MudGrid>
+        }
+    </MudContainer>
 </AdminLayout>
+
+<style>
+    .admin-nav-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 32px 16px;
+        /* 设置固定高度或最小高度确保对齐 */
+        height: 180px;
+        border: 1px solid var(--mud-palette-lines-inputs);
+        border-radius: 12px;
+        background-color: transparent;
+        transition: all 0.2s ease-in-out;
+        text-align: center;
+    }
+
+        .admin-nav-card:hover {
+            border-color: var(--mud-palette-primary);
+            background-color: var(--mud-palette-background-grey);
+            transform: translateY(-4px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+        }
+
+    .action-buttons {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        opacity: 0.4;
+        transition: opacity 0.2s;
+    }
+
+    .admin-nav-card:hover .action-buttons {
+        opacity: 1;
+    }
+
+    .text-truncate {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+</style>
