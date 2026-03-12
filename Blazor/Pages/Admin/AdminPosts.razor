@@ -1,6 +1,7 @@
 ﻿@page "/admin/posts"
 @page "/admin/posts/{page:int}"
 
+@using Mapper.DTO
 <AdminLayout>
     <MudContainer MaxWidth="MaxWidth.Large" Class="mt-8 mb-4">
         @if (PostsData == null)
@@ -13,7 +14,14 @@
         {
             <MudTable Items="@PostsData.Posts" Hover="true" Elevation="1" Class="mb-8">
                 <ToolBarContent>
-                    <MudText Typo="Typo.h6" Class="fw-bold">- Posts -</MudText>
+                    <MudText Typo="Typo.h6" Class="fw-bold">文章管理</MudText>
+                    <MudSpacer />
+                    @* 状态切换按钮组 *@
+                    <MudToggleGroup T="int" Value="@_isDeletedFilter" ValueChanged="OnFilterChanged"
+                                    SelectionMode="SelectionMode.SingleSelection" Color="Color.Default" Variant="Variant.Outlined">
+                        <MudToggleItem Value="0" Text="正常" />
+                        <MudToggleItem Value="1" Text="已删除" />
+                    </MudToggleGroup>
                 </ToolBarContent>
                 <HeaderContent>
                     <MudTh>ID</MudTh>
@@ -24,12 +32,29 @@
                 <RowTemplate>
                     <MudTd DataLabel="ID">@context.Id</MudTd>
                     <MudTd DataLabel="标题">
-                        <MudLink Href="@($"/post/{context.Id}")" Target="_blank" Color="Color.Default" Underline="Underline.Hover">@context.Title</MudLink>
+                        <MudLink Href="@($"/post/{context.Id}")"
+                                 Target="_blank"
+                                 Underline="Underline.Hover"
+                                 Color="Color.Default">
+                            <span style="@(_isDeletedFilter == 1 ? "text-decoration: line-through;" : "")">
+                                @context.Title
+                            </span>
+                        </MudLink>
                     </MudTd>
                     <MudTd DataLabel="发布时间">@context.CreationTime</MudTd>
                     <MudTd DataLabel="操作" Style="text-align:right">
-                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Info" Title="编辑" OnClick="@(async () => await Utils.NavigateTo($"/admin/post/{context.Id}"))" />
-                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Title="删除" OnClick="@(async () => await DeleteAsync(context.Id))" />
+                        <MudIconButton Icon="@Icons.Material.Outlined.Edit" Title="编辑"
+                                       OnClick="@(() => Utils.NavigateTo($"/admin/post/{context.Id}"))" />
+                        @if (_isDeletedFilter == 0)
+                        {
+                            <MudIconButton Icon="@Icons.Material.Outlined.Delete" Title="删除"
+                                           OnClick="@(() => OpenDeleteDialog(context.Id))" />
+                        }
+                        else
+                        {
+                            <MudIconButton Icon="@Icons.Material.Outlined.Restore" Title="恢复文章"
+                                           OnClick="@(() => ExecuteRestore(context.Id))" />
+                        }
                     </MudTd>
                 </RowTemplate>
             </MudTable>
@@ -40,9 +65,10 @@
                     <MudPagination Count="@TotalPage"
                                    Selected="@(page ?? 1)"
                                    SelectedChanged="OnPageChanged"
-                                   Color="Color.Default"
                                    ShowFirstButton="true"
-                                   ShowLastButton="true" />
+                                   ShowLastButton="true"
+                                   Variant="Variant.Outlined"
+                                   Color="Color.Primary" />
                 </div>
             }
         }

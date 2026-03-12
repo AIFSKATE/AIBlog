@@ -20,9 +20,12 @@
                 <MudText Class="d-flex align-center">
                     <MudIcon Icon="@Icons.Material.Outlined.CalendarToday" Class="mr-1" /> @PostDto.CreationTime.ToString("yyyy-MM-dd")
                 </MudText>
+                 <MudText>
                 <MudLink Color="Color.Default"  Href="@($"/category/{PostDto.CategoryId}/")" Class="d-flex align-center">
-                    <MudIcon Icon="@Icons.Material.Outlined.Folder" Class="mr-1" /> @(PostDto.CategoryName ?? "无")
+                        <MudIcon Icon="@Icons.Material.Outlined.Folder" Class="mr-1" />
+                    @(PostDto.CategoryName ?? "无")
                 </MudLink>
+                </MudText>
             </div>
         </div>
 
@@ -61,7 +64,7 @@
     else
     {
         <div class="d-flex justify-center my-8">
-            <MudAlert Severity="Severity.Error" Variant="Variant.Filled">加载文章失败，请稍后重试。</MudAlert>
+            <MudAlert Severity="Severity.Error" Variant="Variant.Outlined">加载文章失败，请稍后重试。</MudAlert>
         </div>
     }
 </MudContainer>

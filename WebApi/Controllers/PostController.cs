@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Domain.Account;
 using Domain.Post;
 using EFCore;
@@ -57,16 +58,13 @@ namespace WebApi.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> QueryPosts([FromQuery] PagingInput input)
         {
-            int cnt = dbContext.posts.Count(x => x.IsDeleted == 0);
-            var list = dbContext.posts.AsNoTracking()
-                .Where(x => x.IsDeleted == 0)
-                .OrderBy(x => x.CreationTime)
-                .Skip((input.Page - 1) * input.Limit)
-                .Take(input.Limit);
-            var res = list.Select(p => mapper.Map<PostBriefDto>(p)).ToList();
-            await Task.CompletedTask;
-            return Ok(new QueryPostsDto(cnt, res));
+            return Ok(await GetPagedPosts(input, 0));
+        }
 
+        [HttpGet]
+        public async Task<IActionResult> AdminQueryPosts([FromQuery] PagingInput input, int isDeleted)
+        {
+            return Ok(await GetPagedPosts(input, isDeleted));
         }
 
         [HttpGet]
@@ -103,6 +101,24 @@ namespace WebApi.Controllers
             return Ok();
         }
 
+        [HttpPut("{postId}")]
+        public async Task<IActionResult> RestorePost(int postId)
+        {
+            // 查询文章（包括已删除的）
+            Post? post = dbContext.posts.SingleOrDefault(p => p.Id == postId);
+
+            if (post == null)
+            {
+                return BadRequest("This post does not exist");
+            }
+
+            // 将状态改回 0
+            post.IsDeleted = 0;
+
+            await dbContext.SaveChangesAsync();
+            return Ok();
+        }
+
         [HttpDelete]
         public async Task<IActionResult> DeletePost(int postId)
         {
@@ -114,6 +130,31 @@ namespace WebApi.Controllers
             post.IsDeleted = 1;
             await dbContext.SaveChangesAsync();
             return Ok();
+        }
+
+        private async Task<QueryPostsDto> GetPagedPosts(PagingInput input, int isDeleted)
+        {
+            // 1. 参数防御
+            int page = input.Page < 1 ? 1 : input.Page;
+            int limit = input.Limit < 1 ? 10 : (input.Limit > 100 ? 100 : input.Limit);
+
+            // 2. 构造基础查询
+            var query = dbContext.posts
+                .AsNoTracking()
+                .Where(x => x.IsDeleted == isDeleted);
+
+            // 3. 异步获取总数
+            int totalCount = await query.CountAsync();
+
+            // 4. 使用 ProjectTo 进行数据库级别的投影，并使用 ToListAsync
+            var list = await query
+                .OrderByDescending(x => x.CreationTime)
+                .Skip((page - 1) * limit)
+                .Take(limit)
+                .ProjectTo<PostBriefDto>(mapper.ConfigurationProvider) // 优化查询性能
+                .ToListAsync(); // 异步获取列表
+
+            return new QueryPostsDto(totalCount, list);
         }
     }
 }
