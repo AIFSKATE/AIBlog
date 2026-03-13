@@ -1,5 +1,6 @@
 ﻿@using System.Net.Http
 @using System.Net.Http.Json
+@using Blazor.Commons
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.Routing
 @using Microsoft.AspNetCore.Components.Web
@@ -11,9 +12,11 @@
 @using Blazor.Shared
 @using Domain.Account
 @using MudBlazor
-
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
 
 @inject Blazor.Commons.Utils Utils
 @inject HttpClient HttpClient
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
+@inject AuthenticationStateProvider AuthStateProvider

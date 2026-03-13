@@ -1,4 +1,5 @@
-﻿using Domain.Account;
+﻿using Blazor.Commons;
+using Domain.Account;
 using MudBlazor;
 using System.Net.Http.Json;
 
@@ -55,6 +56,7 @@ namespace Blazor.Pages.Admin
             var token = await response.Content.ReadAsStringAsync();
             HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
             await Utils.SetTokenAsync(token);
+            (AuthStateProvider as AIBlogAuthStateProvider)?.NotifyUserAuthentication();
 
             Snackbar.Add("登录成功", Severity.Success);
             await Utils.NavigateTo("admin");

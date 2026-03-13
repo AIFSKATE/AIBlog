@@ -176,13 +176,27 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> CurrentUser()
+        public async Task<ActionResult<CurrentUserInfo>> CurrentUser()
         {
-            await Task.CompletedTask;
-            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var userName = this.User.FindFirstValue(ClaimTypes.Name);
-            var roleClaims = this.User.FindAll(ClaimTypes.Role);
-            return Ok(new CurrentUserInfo(userId!, userName!, roleClaims));
+            if (User.Identity?.IsAuthenticated != true)
+            {
+                return Unauthorized(new { message = "用户未登录或会话已过期" });
+            }
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userName = User.FindFirstValue(ClaimTypes.Name);
+
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(userName))
+            {
+                return BadRequest("用户信息不完整，请重新登录");
+            }
+
+            var roleClaims = User.FindAll(ClaimTypes.Role);
+
+            // 5. 此时再构造对象就是绝对安全的
+            var userInfo = new CurrentUserInfo(userId, userName, roleClaims);
+
+            return Ok(userInfo);
         }
 
         [HttpGet]

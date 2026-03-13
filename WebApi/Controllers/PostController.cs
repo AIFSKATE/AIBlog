@@ -73,16 +73,17 @@ namespace WebApi.Controllers
         {
             var post = await dbContext.posts.Include(p => p.Tags)
                 .SingleOrDefaultAsync(p => p.Id == postId && p.IsDeleted == 0);
-            if (post == null)
-            {
-                return BadRequest("This post does not exist");
-            }
-            var ret = mapper.Map<PostDTO>(post);
-            if (ret.CategoryId != null)
-            {
-                ret.CategoryName = dbContext.categories.Single(c => c.Id == ret.CategoryId).CategoryName;
-            }
-            return Ok(ret);
+
+            return await ProcessPostResponse(post);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AdminGetPost(int postId)
+        {
+            var post = await dbContext.posts.Include(p => p.Tags)
+                .SingleOrDefaultAsync(p => p.Id == postId);
+
+            return await ProcessPostResponse(post);
         }
 
         [HttpPut]
@@ -155,6 +156,23 @@ namespace WebApi.Controllers
                 .ToListAsync(); // 异步获取列表
 
             return new QueryPostsDto(totalCount, list);
+        }
+
+        private async Task<IActionResult> ProcessPostResponse(Post? post)
+        {
+            if (post == null)
+            {
+                return BadRequest("This post does not exist");
+            }
+
+            var ret = mapper.Map<PostDTO>(post);
+            if (ret.CategoryId != null)
+            {
+                // 建议使用 FindAsync 或 FirstOrDefaultAsync，并在分类不存在时做防御
+                var category = await dbContext.categories.FindAsync(ret.CategoryId);
+                ret.CategoryName = category?.CategoryName ?? "Unknown";
+            }
+            return Ok(ret);
         }
     }
 }

@@ -30,7 +30,7 @@ namespace WebApi.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> AddTag([FromBody]string tagName)
+        public async Task<IActionResult> AddTag([FromBody] string tagName)
         {
             if (dbContext.tags.Any(t => t.TagName == tagName))
             {
@@ -87,20 +87,31 @@ namespace WebApi.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> QueryPostsUnderTag(int tagId, [FromQuery] PagingInput input)
         {
-            Tag? tag = dbContext.tags.Include(t => t.Posts).AsNoTracking().SingleOrDefault(t => t.Id == tagId);
-            if (tag == null)
+            var tagName = await dbContext.tags
+                .Where(t => t.Id == tagId)
+                .Select(t => t.TagName)
+                .FirstOrDefaultAsync();
+
+            if (tagName == null)
             {
-                return BadRequest("This tag does not exist");
+                return NotFound("Not exist");
             }
-            var info = tag.TagName;
-            var cnt = tag.Posts.Count(p => p.IsDeleted == 0);
-            var list = tag.Posts.Where(p => p.IsDeleted == 0)
+
+            var query = dbContext.posts
+                .AsNoTracking()
+                .Where(p => p.IsDeleted == 0 && p.Tags.Any(t => t.Id == tagId));
+
+            var cnt = await query.CountAsync();
+
+            var list = await query
+                .OrderByDescending(p => p.CreationTime)
                 .Skip((input.Page - 1) * input.Limit)
                 .Take(input.Limit)
-                .ToList();
+                .ToListAsync();
+
             var ret = mapper.Map<List<PostBriefDto>>(list);
-            await Task.CompletedTask;
-            return Ok(new QueryPostsDto(cnt, ret, info));
+
+            return Ok(new QueryPostsDto(cnt, ret, tagName));
         }
     }
 }

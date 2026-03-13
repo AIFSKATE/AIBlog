@@ -41,7 +41,7 @@
                             </span>
                         </MudLink>
                     </MudTd>
-                    <MudTd DataLabel="发布时间">@context.CreationTime</MudTd>
+                    <MudTd DataLabel="发布时间">@context.CreationTime.ToString("yyyy-MM-dd HH:mm")</MudTd>
                     <MudTd DataLabel="操作" Style="text-align:right">
                         <MudIconButton Icon="@Icons.Material.Outlined.Edit" Title="编辑"
                                        OnClick="@(() => Utils.NavigateTo($"/admin/post/{context.Id}"))" />

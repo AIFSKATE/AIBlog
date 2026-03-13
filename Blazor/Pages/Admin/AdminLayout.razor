@@ -11,7 +11,7 @@ else
 }
 
 @code {
-    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
     private bool isLogin { get; set; }
     protected override async Task OnInitializedAsync()
     {

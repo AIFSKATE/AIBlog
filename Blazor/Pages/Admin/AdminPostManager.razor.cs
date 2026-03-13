@@ -41,7 +41,7 @@ namespace Blazor.Pages.Admin
         {
             if (Id.HasValue)
             {
-                PostDTO = await HttpClient.GetFromJsonAsync<PostDTO>($"Post/GetPost?postId={Id.Value}");
+                PostDTO = await HttpClient.GetFromJsonAsync<PostDTO>($"Post/AdminGetPost?postId={Id.Value}");
                 InputText = PostDTO.Markdown ?? string.Empty;
             }
             PostCategory = PostDTO.CategoryId ?? -1;
@@ -96,17 +96,11 @@ namespace Blazor.Pages.Admin
                 Snackbar.Add("文章为空，请重试。", Severity.Error);
                 return;
             }
-            //禁用按钮，防止重复提交
             IsProcessing = true;
-            // --- 2. 同步基本信息 ---
-            // 既然通过了校验，直接赋值即可
             PostDTO.Title = PostTitle;
-            // 如果 PostCategory 是 -1 或 0（代表未选择），则设为 null
-            PostDTO.CategoryId = PostCategory > 0 ? PostCategory : null;
-
-            // 3. 处理标签
-            // 因为你在 OnTagsChanged 里已经实时同步了 PostTags，这里直接赋值即可
+            PostDTO.CategoryId = PostCategory > -1 ? PostCategory : null;
             PostDTO.Tags = PostTags;
+            PostDTO.Markdown = InputText;
 
             HttpResponseMessage response;
             // 4. 调用接口
@@ -114,7 +108,6 @@ namespace Blazor.Pages.Admin
             {
                 // 编辑模式：更新文章
                 response = await HttpClient.PutAsJsonAsync<PostDTO>("Post/UpdatePost", PostDTO);
-
             }
             else
             {
@@ -128,21 +121,20 @@ namespace Blazor.Pages.Admin
                 });
             }
             // 无论成功与否，都要重新启用按钮
-            IsProcessing = false;
             // --- 处理结果反馈 ---
             if (response.IsSuccessStatusCode)
             {
                 // 成功：显示绿色提示
                 Snackbar.Add(Id.HasValue ? "文章更新成功！" : "文章发布成功！", Severity.Success);
-                await Utils.NavigateTo("/posts");
+                await Utils.NavigateTo("/admin/posts");
             }
             else
             {
                 var errorMsg = await response.Content.ReadAsStringAsync();
 
                 Snackbar.Add($"操作失败：状态码 {response.StatusCode}", Severity.Error);
-                Console.WriteLine($"后端报错详情: {errorMsg}");
             }
+            IsProcessing = false;
         }
     }
 }

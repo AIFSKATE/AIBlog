@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
-using EFCore.Data;
+using Domain.Account;
+using Domain.Post;
 using EFCore;
+using EFCore.Data;
 using Mapper.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Domain.Account;
-using Domain.Post;
 
 namespace WebApi.Controllers
 {
@@ -60,11 +60,19 @@ namespace WebApi.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> QueryCategories()
         {
-            var list = dbContext.categories.Include(c => c.Posts).AsNoTracking()
-                .Where(f => f.IsDeleted == 0).ToList();
-            var ret = mapper.Map<List<CategoryDTO>>(list);
-            await Task.CompletedTask;
-            return Ok(ret);
+            var list = await dbContext.categories
+            .AsNoTracking()
+            .Where(f => f.IsDeleted == 0)
+            .Select(c => new CategoryDTO
+            {
+                Id = c.Id,
+                CategoryName = c.CategoryName,
+                Description = c.Description,
+                ArticleCount = c.Posts.Count(p => p.IsDeleted == 0)
+            })
+            .ToListAsync(); // 真正的异步操作
+
+            return Ok(list);
         }
 
         [HttpDelete]
@@ -103,25 +111,31 @@ namespace WebApi.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> QueryPostsUnderCategory([FromQuery] PagingInput input, int categoryId)
         {
-            var posts = dbContext.categories
-                .Where(c => c.Id == categoryId && c.IsDeleted == 0);
-            if (!posts.Any() || posts == null)
+            var categoryName = await dbContext.categories
+                .Where(c => c.Id == categoryId && c.IsDeleted == 0)
+                .Select(c => c.CategoryName)
+                .FirstOrDefaultAsync();
+
+            if (categoryName == null)
             {
-                return NotFound("This category does not exist or no posts found under this category.");
+                return NotFound("Not exist");
             }
 
-            var info = posts.FirstOrDefault()?.CategoryName!;
+            var query = dbContext.posts
+                .AsNoTracking()
+                .Where(p => p.CategoryId == categoryId && p.IsDeleted == 0);
 
-            var allPosts = posts.Include(c => c.Posts).SelectMany(c => c.Posts).Where(p => p.IsDeleted == 0);
-            var cnt = allPosts.Count();
+            var cnt = await query.CountAsync();
 
-            var ret = allPosts
+            var list = await query
+                .OrderByDescending(p => p.CreationTime)
                 .Skip((input.Page - 1) * input.Limit)
                 .Take(input.Limit)
-                .ToList();
-            var res = mapper.Map<List<PostBriefDto>>(ret);
-            await Task.CompletedTask;
-            return Ok(new QueryPostsDto(cnt, res, info));
+                .ToListAsync();
+
+            var res = mapper.Map<List<PostBriefDto>>(list);
+
+            return Ok(new QueryPostsDto(cnt, res, categoryName));
         }
     }
 }

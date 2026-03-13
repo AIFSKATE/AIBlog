@@ -1,4 +1,5 @@
 using Blazor.Commons;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor;
@@ -37,6 +38,9 @@ namespace Blazor
 
                 config.SnackbarConfiguration.BackgroundBlurred = true;
             });
+            builder.Services.AddAuthorizationCore();
+            builder.Services.AddCascadingAuthenticationState();
+            builder.Services.AddScoped<AuthenticationStateProvider, AIBlogAuthStateProvider>();
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(baseAddress) });
             builder.Services.AddSingleton<Utils>();
 
