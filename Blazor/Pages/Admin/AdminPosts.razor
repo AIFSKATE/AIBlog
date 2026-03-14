@@ -18,10 +18,16 @@
                     <MudSpacer />
                     @* 状态切换按钮组 *@
                     <MudToggleGroup T="int" Value="@_isDeletedFilter" ValueChanged="OnFilterChanged"
-                                    SelectionMode="SelectionMode.SingleSelection" Color="Color.Default" Variant="Variant.Outlined">
+                                    SelectionMode="SelectionMode.SingleSelection" Color="Color.Default" Variant="Variant.Outlined" Class="mr-4">
                         <MudToggleItem Value="0" Text="正常" />
                         <MudToggleItem Value="1" Text="已删除" />
                     </MudToggleGroup>
+
+                    <MudButton Variant="Variant.Outlined"
+                               StartIcon="@Icons.Material.Outlined.Add"
+                               OnClick="@(() => Utils.NavigateTo($"/admin/postmanager"))">
+                        新增
+                    </MudButton>
                 </ToolBarContent>
                 <HeaderContent>
                     <MudTh>ID</MudTh>
@@ -32,7 +38,7 @@
                 <RowTemplate>
                     <MudTd DataLabel="ID">@context.Id</MudTd>
                     <MudTd DataLabel="标题">
-                        <MudLink Href="@($"/post/{context.Id}")"
+                        <MudLink Href="@($"admin/post/{context.Id}")"
                                  Target="_blank"
                                  Underline="Underline.Hover"
                                  Color="Color.Default">
@@ -44,7 +50,7 @@
                     <MudTd DataLabel="发布时间">@context.CreationTime.ToString("yyyy-MM-dd HH:mm")</MudTd>
                     <MudTd DataLabel="操作" Style="text-align:right">
                         <MudIconButton Icon="@Icons.Material.Outlined.Edit" Title="编辑"
-                                       OnClick="@(() => Utils.NavigateTo($"/admin/post/{context.Id}"))" />
+                                       OnClick="@(() => Utils.NavigateTo($"/admin/postmanager/{context.Id}"))" />
                         @if (_isDeletedFilter == 0)
                         {
                             <MudIconButton Icon="@Icons.Material.Outlined.Delete" Title="删除"

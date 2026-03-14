@@ -1,8 +1,20 @@
 ﻿@page "/admin/tags"
+@using Mapper.DTO
 
 <AdminLayout>
-    <MudContainer MaxWidth="MaxWidth.Large" Class="mt-8">
-        @if (Tags == null)
+    <MudContainer MaxWidth="MaxWidth.Large" Class="mt-8 mb-4">
+        <div class="d-flex align-center mb-6">
+            <MudText Typo="Typo.h6" Class="fw-bold">标签管理</MudText>
+            <MudText Typo="Typo.body2" Class="ms-4 mud-text-secondary">共 @(tags?.Count ?? 0) 个</MudText>
+            <MudSpacer />
+            <MudButton Variant="Variant.Outlined"
+                       StartIcon="@Icons.Material.Outlined.Add"
+                       OnClick="AddTag">
+                新增标签
+            </MudButton>
+        </div>
+
+        @if (tags == null)
         {
             <div class="d-flex justify-center my-16">
                 <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
@@ -10,41 +22,41 @@
         }
         else
         {
-            <MudTable Items="@Tags" Hover="true" Elevation="1" Class="mb-8">
-                <ToolBarContent>
-                    <MudText Typo="Typo.h6" Class="fw-bold">- Tags -</MudText>
-                    <MudSpacer />
-                    <MudButton Color="Color.Primary" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add" OnClick="AddTag">新增标签</MudButton>
-                </ToolBarContent>
-                <HeaderContent>
-                    <MudTh>ID</MudTh>
-                    <MudTh>标签名称</MudTh>
-                    <MudTh Style="text-align:right">操作</MudTh>
-                </HeaderContent>
-                <RowTemplate>
-                    <MudTd DataLabel="ID">@context.Id</MudTd>
-                    <MudTd DataLabel="标签名称">
-                        <MudLink Href="@($"/tag/{context.Id}")" Target="_blank" Color="Color.Primary">@context.TagName</MudLink>
-                    </MudTd>
-                    <MudTd DataLabel="操作" Style="text-align:right">
-                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Info" Title="编辑" OnClick="@(() => UpdateTag(context))" />
-                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Title="删除" OnClick="@(async () => await DeleteTagAsync(context.Id))" />
-                    </MudTd>
-                </RowTemplate>
-            </MudTable>
+            <div class="d-flex flex-wrap gap-2">
+                @foreach (var tag in tags)
+                {
+                    @* 增加 tag-chip-hover 类名 *@
+                    <MudChip T="TagDTO"
+                             Variant="Variant.Outlined"
+                             OnClose="@(() => OpenDeleteDialog(tag))"
+                             CloseIcon="@Icons.Material.Outlined.Close"
+                             Class="tag-chip-hover pa-4">
+                        <div class="d-flex align-center">
+                            <MudLink Href="@($"/tag/{tag.Id}")"
+                                     Target="_blank"
+                                     Underline="Underline.None"
+                                     Color="Color.Default"
+                                     Class="mr-2"
+                                     Style="font-weight: 500;">
+                                @tag.TagName
+                            </MudLink>
 
-            <MudDialog @bind-IsVisible="Open" Options="new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true }">
-                <TitleContent>
-                    <MudText Typo="Typo.h6">标签信息管理</MudText>
-                </TitleContent>
-                <DialogContent>
-                    <MudTextField @bind-Value="UploadData.TagName" Label="TagName" Variant="Variant.Outlined" Class="mb-4" />
-                </DialogContent>
-                <DialogActions>
-                    <MudButton OnClick="OnCancel">取消</MudButton>
-                    <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="OnConfirm">确定</MudButton>
-                </DialogActions>
-            </MudDialog>
+                            <MudIconButton Icon="@Icons.Material.Outlined.Edit"
+                                           Size="Size.Small"
+                                           OnClick="@(() => UpdateTag(tag))"
+                                           Class="pa-0"
+                                           Style="font-size: 1.1rem;" />
+                        </div>
+                    </MudChip>
+                }
+            </div>
         }
     </MudContainer>
 </AdminLayout>
+
+<style>
+    .tag-chip-hover:hover {
+        border-color: var(--mud-palette-primary);
+        background-color: var(--mud-palette-background-grey);
+    }
+</style>

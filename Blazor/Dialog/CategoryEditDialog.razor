@@ -1,0 +1,30 @@
+﻿@using Mapper.DTO
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Outlined.Category" Class="mr-3 mb-n1" />
+            @Title
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudTextField T="string" Label="分类名称" @bind-Value="Model.CategoryName"
+                      Required="true" AutoFocus="true" Variant="Variant.Outlined" />
+        <MudTextField T="string" Label="描述" @bind-Value="Model.Description"
+                      Class="mt-4" Variant="Variant.Outlined" Lines="3" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Outlined" OnClick="Cancel">取消</MudButton>
+        <MudButton Variant="Variant.Outlined" Color="@Color" OnClick="Submit">提交</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; }
+    [Parameter] public string Title { get; set; }
+    [Parameter] public Color Color { get; set; }
+    [Parameter] public CategoryDTO Model { get; set; } = new();
+
+    private void Submit() => MudDialog.Close(DialogResult.Ok(Model));
+    private void Cancel() => MudDialog.Cancel();
+}

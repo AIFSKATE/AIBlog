@@ -72,7 +72,7 @@ namespace WebApi.Controllers
         public async Task<IActionResult> GetPost(int postId)
         {
             var post = await dbContext.posts.Include(p => p.Tags)
-                .SingleOrDefaultAsync(p => p.Id == postId && p.IsDeleted == 0);
+                .FirstOrDefaultAsync(p => p.Id == postId && p.IsDeleted == 0);
 
             return await ProcessPostResponse(post);
         }
@@ -81,7 +81,7 @@ namespace WebApi.Controllers
         public async Task<IActionResult> AdminGetPost(int postId)
         {
             var post = await dbContext.posts.Include(p => p.Tags)
-                .SingleOrDefaultAsync(p => p.Id == postId);
+                .FirstOrDefaultAsync(p => p.Id == postId);
 
             return await ProcessPostResponse(post);
         }

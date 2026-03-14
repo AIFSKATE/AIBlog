@@ -1,7 +1,8 @@
 ﻿@page "/admin/categories"
+@using Mapper.DTO
 
 <AdminLayout>
-    <MudContainer MaxWidth="MaxWidth.Large" Class="mt-8">
+    <MudContainer MaxWidth="MaxWidth.Large" Class="mt-8 mb-4">
         @if (categories == null)
         {
             <div class="d-flex justify-center my-16">
@@ -12,9 +13,21 @@
         {
             <MudTable Items="@categories" Hover="true" Elevation="1" Class="mb-8">
                 <ToolBarContent>
-                    <MudText Typo="Typo.h6" Class="fw-bold">- Categories -</MudText>
+                    <MudText Typo="Typo.h6" Class="fw-bold">分类管理</MudText>
                     <MudSpacer />
-                    <MudButton Color="Color.Primary" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add" OnClick="AddCategory">新增分类</MudButton>
+                    
+                    @* Status Toggle Group matching AdminPosts style *@
+                    <MudToggleGroup T="int" Value="@_isDeletedFilter" ValueChanged="OnFilterChanged"
+                                    SelectionMode="SelectionMode.SingleSelection" Color="Color.Default" Variant="Variant.Outlined" Class="mr-4">
+                        <MudToggleItem Value="0" Text="正常" />
+                        <MudToggleItem Value="1" Text="已删除" />
+                    </MudToggleGroup>
+
+                    <MudButton Variant="Variant.Outlined"
+                               StartIcon="@Icons.Material.Outlined.Add"
+                               OnClick="AddCategory">
+                        新增分类
+                    </MudButton>
                 </ToolBarContent>
                 <HeaderContent>
                     <MudTh>ID</MudTh>
@@ -25,30 +38,33 @@
                 <RowTemplate>
                     <MudTd DataLabel="ID">@context.Id</MudTd>
                     <MudTd DataLabel="分类名称">
-                        <MudLink Href="@($"/category/{context.Id}")" Target="_blank" Color="Color.Primary">@context.CategoryName</MudLink>
+                        <MudLink Href="@($"/admin/category/{context.Id}")" Color="Color.Default" Target="_blank" Underline="Underline.Hover">
+                            <span style="@(_isDeletedFilter == 1 ? "text-decoration: line-through;" : "")">
+                                @context.CategoryName
+                            </span>
+                        </MudLink>
                     </MudTd>
                     <MudTd DataLabel="文章数">@context.ArticleCount</MudTd>
                     <MudTd DataLabel="操作" Style="text-align:right">
-                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Info" Title="编辑" OnClick="@(() => UpdateCategory(context))" />
-                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Title="删除" OnClick="@(async () => await DeleteAsync(context.Id))" />
+                        <MudIconButton Icon="@Icons.Material.Outlined.Edit"
+                                       Title="编辑"
+                                       OnClick="@(() => UpdateCategory(context))" />
+                        
+                        @if (_isDeletedFilter == 0)
+                        {
+                            <MudIconButton Icon="@Icons.Material.Outlined.Delete"
+                                           Title="删除"
+                                           OnClick="@(() => OpenDeleteDialog(context))" />
+                        }
+                        else
+                        {
+                            <MudIconButton Icon="@Icons.Material.Outlined.Restore"
+                                           Title="恢复"
+                                           OnClick="@(() => ExecuteRestore(context.Id))" />
+                        }
                     </MudTd>
                 </RowTemplate>
             </MudTable>
-
-            @* 使用内置 Dialog 替代你的 Box 组件 *@
-            <MudDialog @bind-IsVisible="Open" Options="new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true }">
-                <TitleContent>
-                    <MudText Typo="Typo.h6">分类信息管理</MudText>
-                </TitleContent>
-                <DialogContent>
-                    <MudTextField @bind-Value="UploadData.CategoryName" Label="CategoryName" Variant="Variant.Outlined" Class="mb-4" />
-                    <MudTextField @bind-Value="UploadData.Description" Label="Description" Variant="Variant.Outlined" />
-                </DialogContent>
-                <DialogActions>
-                    <MudButton OnClick="OnCancel">取消</MudButton>
-                    <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="OnConfirm">确定</MudButton>
-                </DialogActions>
-            </MudDialog>
         }
     </MudContainer>
 </AdminLayout>

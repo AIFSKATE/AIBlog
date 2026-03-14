@@ -1,7 +1,7 @@
 ﻿using Domain.Account;
 using Mapper.DTO;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Authorization; // 必须引入
+using Microsoft.AspNetCore.Components.Authorization;
 using System.Net.Http.Json;
 
 namespace Blazor.Pages.Posts
@@ -21,13 +21,17 @@ namespace Blazor.Pages.Posts
         {
             try
             {
-                // 2. 获取当前用户信息
+                // 1. 获取当前用户信息
                 var authState = await AuthStateTask;
                 var user = authState.User;
                 isAdmin = user.IsInRole(AIBlogRole.Admin);
-                // 3. 动态决定 API 路径
-                // 如果是管理员，调用 AdminGetPost 确保能看到 IsDeleted == 1 的文章
-                string requestUrl = isAdmin
+
+                // 2. 识别当前是否处于管理路由
+                bool isAdminRoute = NavigationManager.Uri.Contains("/admin/post/");
+
+                // 只有当 [是管理员] 且 [在管理路径下] 时，才调用 AdminGetPost
+                // 这样即使你是管理员，只要走 /post/{Id} 路径，看到的也是游客过滤后的结果
+                string requestUrl = (isAdmin && isAdminRoute)
                     ? $"/Post/AdminGetPost?postId={Id}"
                     : $"/Post/GetPost?postId={Id}";
 
@@ -39,7 +43,7 @@ namespace Blazor.Pages.Posts
                 }
                 else
                 {
-                    // 如果游客尝试访问已删除文章，后端会返回 400/404，进入错误状态
+                    // 如果游客访问已删除文章，后端返回 400/404，进入错误状态
                     Error = true;
                 }
             }

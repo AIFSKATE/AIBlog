@@ -32,6 +32,11 @@ namespace WebApi.Controllers
         [HttpPost]
         public async Task<IActionResult> AddTag([FromBody] string tagName)
         {
+            if (string.IsNullOrWhiteSpace(tagName))
+            {
+                return BadRequest("Tag name cannot be empty");
+            }
+
             if (dbContext.tags.Any(t => t.TagName == tagName))
             {
                 return BadRequest("This tag already exists");

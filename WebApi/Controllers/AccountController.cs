@@ -84,7 +84,7 @@ namespace WebApi.Controllers
             return Ok();
         }
 
-        [HttpGet]
+        [HttpPut]
         public async Task<IActionResult> UserToRole(string username, string rolename)
         {
             var user = await userManager.FindByNameAsync(username);
