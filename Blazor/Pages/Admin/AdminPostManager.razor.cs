@@ -1,4 +1,5 @@
-﻿using Domain.Post;
+﻿using Blazor.Dialog;
+using Domain.Post;
 using Mapper.DTO;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -79,6 +80,62 @@ namespace Blazor.Pages.Admin
         private void OnCategoryChanged(int selectedId)
         {
             PostCategory = selectedId;
+        }
+
+
+        private async Task OpenAddTagDialog()
+        {
+            var parameters = new DialogParameters<TagEditDialog>
+            {
+                { x => x.Title, "新增标签" },
+                { x => x.Color, Color.Primary },
+                { x => x.Model, new TagDTO() }
+            };
+
+            var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, MaxWidth = MaxWidth.Small };
+            var dialog = await DialogService.ShowAsync<TagEditDialog>("Add", parameters, options);
+            var result = await dialog.Result;
+
+            if (!result.Canceled)
+            {
+                var tagData = (TagDTO)result.Data;
+                if (string.IsNullOrWhiteSpace(tagData.TagName)) return;
+
+                // 匹配后端接口: [HttpPost] AddTag([FromBody] string tagName)
+                var response = await HttpClient.PostAsJsonAsync("Tag/AddTag", tagData.TagName);
+                if (response.IsSuccessStatusCode)
+                {
+                    Snackbar.Add("标签新增成功", Severity.Success);
+                    await ReloadTagsAsync(); // 刷新列表 
+                }
+            }
+        }
+
+        private async Task OpenAddCategoryDialog()
+        {
+            var parameters = new DialogParameters<CategoryEditDialog>
+            {
+                { x => x.Title, "新增分类" },
+                { x => x.Color, Color.Secondary },
+                { x => x.Model, new CategoryDTO() }
+            };
+
+            var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true, MaxWidth = MaxWidth.Small };
+            var dialog = await DialogService.ShowAsync<CategoryEditDialog>("Add", parameters, options);
+            var result = await dialog.Result;
+
+            if (!result.Canceled)
+            {
+                var categoryData = (CategoryDTO)result.Data;
+
+                // 匹配后端接口: [HttpPost] AddCategory(CategoryDTO categoryDTO)
+                var response = await HttpClient.PostAsJsonAsync("Category/AddCategory", categoryData);
+                if (response.IsSuccessStatusCode)
+                {
+                    Snackbar.Add("分类新增成功", Severity.Success);
+                    await ReloadCategoriesAsync(); // 刷新列表 
+                }
+            }
         }
 
         private async Task OnSubmit()

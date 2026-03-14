@@ -30,6 +30,7 @@
                                     @* Value 绑定 ID，这样 TagsSelected 拿到的就是 ID 列表 *@
                                     <MudChip Value="@tag.Id" Text="@tag.TagName" Color="Color.Primary" Variant="Variant.Outlined" />
                                 }
+                                <MudChip Icon="@Icons.Material.Outlined.Add" OnClick="OpenAddTagDialog" Color="Color.Primary" Variant="Variant.Text">新增标签</MudChip>
                             </MudChipSet>
                         </div>
                     </MudItem>
@@ -46,6 +47,7 @@
                                 {
                                     <MudChip Value="@cat.Id" Text="@cat.CategoryName" Color="Color.Secondary" Variant="Variant.Outlined" />
                                 }
+                                <MudChip Icon="@Icons.Material.Outlined.Add" OnClick="OpenAddCategoryDialog" Color="Color.Secondary" Variant="Variant.Text">新增分类</MudChip>
                             </MudChipSet>
                         </div>
                     </MudItem>
