@@ -153,6 +153,12 @@ namespace Blazor.Pages.Admin
                 Snackbar.Add("文章为空，请重试。", Severity.Error);
                 return;
             }
+
+            if (PostCategory < 1)
+            {
+                Snackbar.Add("请选择分类", Severity.Error);
+                return;
+            }
             IsProcessing = true;
             PostDTO.Title = PostTitle;
             PostDTO.CategoryId = PostCategory > -1 ? PostCategory : null;

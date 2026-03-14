@@ -32,8 +32,8 @@ namespace Blazor.Pages.Posts
                 // 只有当 [是管理员] 且 [在管理路径下] 时，才调用 AdminGetPost
                 // 这样即使你是管理员，只要走 /post/{Id} 路径，看到的也是游客过滤后的结果
                 string requestUrl = (isAdmin && isAdminRoute)
-                    ? $"/Post/AdminGetPost?postId={Id}"
-                    : $"/Post/GetPost?postId={Id}";
+                    ? $"Post/AdminGetPost?postId={Id}"
+                    : $"Post/GetPost?postId={Id}";
 
                 var response = await HttpClient.GetAsync(requestUrl);
 
