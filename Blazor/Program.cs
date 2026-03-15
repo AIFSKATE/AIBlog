@@ -43,6 +43,7 @@ namespace Blazor
             builder.Services.AddScoped<AuthenticationStateProvider, AIBlogAuthStateProvider>();
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(baseAddress) });
             builder.Services.AddSingleton<Utils>();
+            builder.Services.AddSingleton<MarkdownService>();
 
             await builder.Build().RunAsync();
         }

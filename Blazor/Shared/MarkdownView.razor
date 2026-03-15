@@ -1,0 +1,24 @@
+﻿@inject IJSRuntime JSRuntime
+<div>
+<MudText HtmlTag="div"
+         id="@_elementId"
+             Class="@($"markdown-body {Class}")"
+         Style="@($"overflow-wrap: break-word; {Style}")">
+    
+    @if (!string.IsNullOrWhiteSpace(Content))
+    {
+        @((MarkupString)MarkdownService.ToHtml(Content))
+    }
+</MudText>
+</div>
+
+
+
+@code {
+    [Parameter] public string Content { get; set; }
+    [Parameter] public string Class { get; set; }
+    [Parameter] public string Style { get; set; }
+
+    // 自动生成唯一 ID，确保同一页面放多个组件时，JS 渲染互不干扰
+    private string _elementId = $"md-{Guid.NewGuid().ToString("N").Substring(0, 8)}";
+}

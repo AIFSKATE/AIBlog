@@ -22,7 +22,7 @@ namespace Blazor.Pages.Admin
             {
                 OriginalHtmlText = value;
                 Console.WriteLine(OriginalHtmlText);
-                HtmlText = Markdig.Markdown.ToHtml(value);
+                HtmlText = MarkdownService.ToHtml(value);
             }
         }
         private string HtmlText = string.Empty;

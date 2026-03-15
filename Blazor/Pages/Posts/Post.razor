@@ -31,9 +31,7 @@
         </div>
 
         @* 正文区域 *@
-        <MudText class="mb-8" style="overflow-wrap: break-word;">
-            @((MarkupString)Markdig.Markdown.ToHtml(PostDto.Markdown))
-        </MudText>
+        <MarkdownView Content="@PostDto.Markdown" Class="mb-8" />
 
         @* 标签区域：使用 MudChip *@
         @if (PostDto.Tags.Any())

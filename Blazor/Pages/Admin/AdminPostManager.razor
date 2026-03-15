@@ -84,7 +84,7 @@
                 <MudPaper Outlined="true"
                           Class="pa-4 flex-grow-1"
                           Style="overflow-y:auto;">
-                    <MudText>@((MarkupString)HtmlText)</MudText>
+                    <MarkdownView Content="@HtmlText" Class="mb-8" />
                 </MudPaper>
             </MudItem>
         </MudGrid>
