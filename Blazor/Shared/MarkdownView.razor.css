@@ -3,21 +3,16 @@
     text-decoration: underline;
 }
 
-/* 2. 代码块：去掉背景色，改用边框 */
-::deep pre {
-    background-color: transparent;
-    border: 1px solid var(--mud-palette-divider);
-    padding: 1rem;
-    border-radius: 4px;
-    overflow-x: auto;
-    margin: 1rem 0;
+/* 强制穿透修改 Prism 的默认盒子 */
+::deep pre[class*="language-"] {
+    background-color: transparent; /* 去掉背景 */
+    border: 1px solid var(--mud-palette-divider); /* 使用 MudBlazor 的边框色 */
+    border-radius: 8px;
+    padding: 1.25rem;
+    box-shadow: none; /* 去掉 Prism 可能带的阴影 */
 }
 
-/* 3. 行内代码：保持简洁，不设背景 */
-::deep :not(pre) > code {
-    border: 1px solid var(--mud-palette-divider);
-    padding: 2px 4px;
-    border-radius: 4px;
-    font-size: 0.9em;
+/* 调整代码文字字体 */
+::deep code[class*="language-"] {
+    font-family: 'Cascadia Code', 'Consolas', monospace;
 }
-

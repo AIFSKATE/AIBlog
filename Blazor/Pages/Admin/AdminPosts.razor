@@ -39,7 +39,6 @@
                     <MudTd DataLabel="ID">@context.Id</MudTd>
                     <MudTd DataLabel="标题">
                         <MudLink Href="@($"admin/post/{context.Id}")"
-                                 Target="_blank"
                                  Underline="Underline.Hover"
                                  Color="Color.Default">
                             <span style="@(_isDeletedFilter == 1 ? "text-decoration: line-through;" : "")">

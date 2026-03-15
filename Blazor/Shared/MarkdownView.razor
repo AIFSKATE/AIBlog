@@ -21,4 +21,9 @@
 
     // 自动生成唯一 ID，确保同一页面放多个组件时，JS 渲染互不干扰
     private string _elementId = $"md-{Guid.NewGuid().ToString("N").Substring(0, 8)}";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await Utils.InvokeAsync("Prism.highlightAll");
+    }
 }

@@ -1,6 +1,7 @@
 ﻿using Markdig;
 using Markdig.Renderers.Html;
 using Markdig.Syntax;
+using System.Text.RegularExpressions;
 
 public class MarkdownService
 {
@@ -18,7 +19,11 @@ public class MarkdownService
     public string ToHtml(string markdown)
     {
         if (string.IsNullOrWhiteSpace(markdown)) return string.Empty;
-        return Markdown.ToHtml(markdown, _pipeline);
+
+        var normalized = Regex.Replace(markdown, @"(?m)^(\s*```)C#$", "$1csharp", RegexOptions.IgnoreCase);
+        normalized = Regex.Replace(normalized, @"(?m)^(\s*```)C\+\+$", "$1cpp", RegexOptions.IgnoreCase);
+
+        return Markdown.ToHtml(normalized, _pipeline);
     }
 
     // 这是一个全能方法，一次解析，吐出所有你想要的东西
