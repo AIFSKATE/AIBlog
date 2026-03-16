@@ -16,6 +16,8 @@ namespace Blazor.Pages.Posts
         PostDTO? PostDto { get; set; }
         public bool Error = false;
         private bool isAdmin = false;
+        private List<BlogHeader> headers = new();
+        private string? renderedHtml;
 
         protected override async Task OnInitializedAsync()
         {
@@ -40,6 +42,12 @@ namespace Blazor.Pages.Posts
                 if (response.IsSuccessStatusCode)
                 {
                     PostDto = await response.Content.ReadFromJsonAsync<PostDTO>();
+                    if (PostDto != null && !string.IsNullOrWhiteSpace(PostDto.Markdown))
+                    {
+                        var result = MarkdownService.GetParsedBlog(PostDto.Markdown);
+                        renderedHtml = result.Html;
+                        headers = result.Headers;
+                    }
                 }
                 else
                 {

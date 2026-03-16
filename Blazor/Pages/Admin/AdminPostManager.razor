@@ -83,8 +83,8 @@
             <MudItem xs="6" Class="d-flex flex-column">
                 <MudPaper Outlined="true"
                           Class="pa-4 flex-grow-1"
-                          Style="overflow-y:auto;">
-                    <MarkdownView Content="@HtmlText" Class="mb-8" />
+                          Style="overflow-y: auto; height: 0; min-height: 100%;">
+                    <MarkdownView HtmlContent="@HtmlText" Class="mb-8" />
                 </MudPaper>
             </MudItem>
         </MudGrid>

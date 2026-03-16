@@ -1,16 +1,18 @@
 ﻿@page "/post/{Id:int}"
 @page "/admin/post/{Id:int}"
 
-<MudContainer MaxWidth="MaxWidth.Medium" Class="mt-8 mb-8">
-    @if (PostDto == null && !Error)
-    {
+@if (PostDto == null && !Error)
+{
+    <MudContainer MaxWidth="MaxWidth.Medium" Class="mt-8 mb-8">
         <div class="d-flex justify-center my-16">
             <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
         </div>
-    }
-    else if (!Error)
-    {
-        @* 头部信息 *@
+    </MudContainer>
+}
+else if (!Error)
+{
+    @* 1. 头部信息容器 - 保持 Medium 宽度确保标题绝对居中 *@
+    <MudContainer MaxWidth="MaxWidth.Large" Class="mt-8">
         <div class="mb-10 text-center">
             <MudText Typo="Typo.h3" Class="mb-4 fw-bold">@PostDto.Title</MudText>
 
@@ -21,19 +23,52 @@
                 <MudText Class="d-flex align-center">
                     <MudIcon Icon="@Icons.Material.Outlined.CalendarToday" Class="mr-1" /> @PostDto.CreationTime.ToString("yyyy-MM-dd")
                 </MudText>
-                 <MudText>
-                <MudLink Color="Color.Default"  Href="@($"/category/{PostDto.CategoryId}/")" Class="d-flex align-center">
+                <MudText>
+                    <MudLink Color="Color.Default" Href="@($"/category/{PostDto.CategoryId}/")" Class="d-flex align-center">
                         <MudIcon Icon="@Icons.Material.Outlined.Folder" Class="mr-1" />
-                    @(PostDto.CategoryName ?? "无")
-                </MudLink>
+                        @(PostDto.CategoryName ?? "无")
+                    </MudLink>
                 </MudText>
             </div>
         </div>
+    </MudContainer>
 
-        @* 正文区域 *@
-        <MarkdownView Content="@PostDto.Markdown" Class="mb-8" />
+    @* 2. 正文与目录容器 - 升级到 Large 宽度以便在右侧腾出目录空间 *@
+    <MudContainer MaxWidth="MaxWidth.Large">
+        <MudGrid>
+            @* 左侧正文列 (占 9 份) *@
+            <MudItem xs="12" md="9">
+                @* 优先使用解析好的 renderedHtml *@
+                <MarkdownView HtmlContent="@renderedHtml" Content="@PostDto.Markdown" Class="mb-8" />
+            </MudItem>
 
-        @* 标签区域：使用 MudChip *@
+            @* 右侧目录列 (占 3 份) - 仅在 md 及以上屏幕显示 *@
+            <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
+                <MudItem md="3">
+                    <div style="position: sticky; top: 120px; border-left: 1px solid var(--mud-palette-divider); padding-left: 1.5rem; height: fit-content;">
+                        <MudText Typo="Typo.h6" Class="mb-4" Style="font-weight: bold;">目录</MudText>
+                        <div style="max-height: 80vh; overflow-y: auto; scrollbar-width: none;">
+                            @foreach (var header in headers)
+                            {
+                                <div style="margin-left: @((header.Level - 1) * 16)px" class="mb-2">
+                                    <MudLink Href="@($"{NavigationManager.Uri.Split('#')[0]}#{@header.Id}")"
+                                             Color="Color.Default"
+                                             Underline="Underline.None"
+                                             Style="font-size: 0.9rem;">
+                                        @header.Text
+                                    </MudLink>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </MudItem>
+            </MudHidden>
+        </MudGrid>
+    </MudContainer>
+
+    @* 3. 底部信息容器 - 回归 Medium 宽度确保标签和版权信息居中 *@
+    <MudContainer MaxWidth="MaxWidth.Large" Class="mb-8 mt-8">
+        @* 标签区域 *@
         @if (PostDto.Tags.Any())
         {
             <div class="d-flex align-center gap-2 mb-8">
@@ -59,11 +94,13 @@
                 进行许可。
             </MudText>
         </MudAlert>
-    }
-    else
-    {
+    </MudContainer>
+}
+else
+{
+    <MudContainer MaxWidth="MaxWidth.Medium" Class="mt-8 mb-8">
         <div class="d-flex justify-center my-8">
             <MudAlert Severity="Severity.Error" Variant="Variant.Outlined">加载文章失败，请稍后重试。</MudAlert>
         </div>
-    }
-</MudContainer>
+    </MudContainer>
+}

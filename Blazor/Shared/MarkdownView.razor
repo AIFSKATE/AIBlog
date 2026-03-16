@@ -1,20 +1,25 @@
 ﻿@inject IJSRuntime JSRuntime
 <div>
-<MudText HtmlTag="div"
-         id="@_elementId"
+    <MudText HtmlTag="div"
+             id="@_elementId"
              Class="@($"markdown-body {Class}")"
-         Style="@($"overflow-wrap: break-word; {Style}")">
-    
-    @if (!string.IsNullOrWhiteSpace(Content))
-    {
-        @((MarkupString)MarkdownService.ToHtml(Content))
-    }
-</MudText>
+             Style="@($"overflow-wrap: break-word; {Style}")">
+
+        @if (!string.IsNullOrWhiteSpace(HtmlContent))
+        {
+            @((MarkupString)HtmlContent)
+        }
+        else if (!string.IsNullOrWhiteSpace(Content))
+        {
+            @((MarkupString)MarkdownService.ToHtml(Content))
+        }
+    </MudText>
 </div>
 
 
 
 @code {
+    [Parameter] public string HtmlContent { get; set; }
     [Parameter] public string Content { get; set; }
     [Parameter] public string Class { get; set; }
     [Parameter] public string Style { get; set; }
