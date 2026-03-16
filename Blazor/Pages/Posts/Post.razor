@@ -29,6 +29,21 @@ else if (!Error)
                         @(PostDto.CategoryName ?? "无")
                     </MudLink>
                 </MudText>
+                @* 使用原生授权组件，指定只有 Admin 角色可见 *@
+                <AuthorizeView Roles="Admin">
+                    <Authorized>
+                        @* 内部依然保留路由检测，确保只在 /admin/ 路径下显示编辑键 *@
+                        @if (NavigationManager.Uri.Contains("/admin/post/"))
+                        {
+                            <MudText>
+                                <MudLink Color="Color.Default" Href="@($"/admin/postmanager/{Id}")" Class="d-flex align-center">
+                                    <MudIcon Icon="@Icons.Material.Outlined.Edit" Class="mr-1" />
+                                    编辑文章
+                                </MudLink>
+                            </MudText>
+                        }
+                    </Authorized>
+                </AuthorizeView>
             </div>
         </div>
     </MudContainer>
